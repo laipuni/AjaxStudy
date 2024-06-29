@@ -3,8 +3,10 @@ package com.example.ajaxstudy.domain.comment;
 import com.example.ajaxstudy.domain.board.Board;
 import com.example.ajaxstudy.domain.board.BoardRepository;
 import com.example.ajaxstudy.domain.comment.request.CommentAddRequest;
+import com.example.ajaxstudy.domain.comment.request.CommentChildRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentReplyRequest;
 import com.example.ajaxstudy.domain.comment.response.CommentAddResponse;
+import com.example.ajaxstudy.domain.comment.response.CommentChildResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -152,6 +154,61 @@ class CommentServiceTest {
         //when
         //then
         assertThatThrownBy(() -> commentService.reply(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageMatching("해당 댓글은 존재하지 않습니다.");
+    }
+
+    @DisplayName("조회할 답글들의 댓글의 Id를 받아 답글들을 조회한다.")
+    @Test
+    void findAllByParentId(){
+        //given
+        Board board = Board.builder()
+                .writer("작성자")
+                .title("제목")
+                .heartNum(0)
+                .contents("내용")
+                .build();
+        Comment parent = Comment.builder()
+                .writer("부모")
+                .contents("부모!")
+                .board(board)
+                .build();
+        Comment child = Comment.builder()
+                .writer("자식")
+                .contents("자식!")
+                .board(board)
+                .build();
+
+        child.changeParentComment(parent);
+        boardRepository.save(board);
+        commentRepository.saveAll(List.of(parent,child));
+
+        CommentChildRequest request = CommentChildRequest.builder()
+                .commentId(parent.getId())
+                .build();
+
+        //when
+        List<CommentChildResponse> childs = commentService.findAllByParentId(request);
+
+        //then
+        assertThat(childs).hasSize(1)
+                .extracting("writer","contents")
+                .containsExactlyInAnyOrder(
+                        tuple("자식","자식")
+                );
+    }
+
+    @DisplayName("조회할 답글들의 댓글이 존재하지 않을 경우 에러가 발생한다.")
+    @Test
+    void findAllByParentIdWithNoExistComment(){
+        //given
+        CommentChildRequest request = CommentChildRequest.builder()
+                .commentId(0L)
+                .build();
+
+        //when
+        //then
+        assertThatThrownBy(() -> commentService.findAllByParentId(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageMatching("해당 댓글은 존재하지 않습니다.");
     }
