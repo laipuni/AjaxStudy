@@ -13,6 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -159,6 +160,7 @@ class CommentServiceTest {
     }
 
     @DisplayName("조회할 답글들의 댓글의 Id를 받아 답글들을 조회한다.")
+    @Transactional
     @Test
     void findAllByParentId(){
         //given
@@ -168,11 +170,14 @@ class CommentServiceTest {
                 .heartNum(0)
                 .contents("내용")
                 .build();
+        boardRepository.save(board);
         Comment parent = Comment.builder()
                 .writer("부모")
                 .contents("부모!")
                 .board(board)
                 .build();
+        commentRepository.save(parent);
+
         Comment child = Comment.builder()
                 .writer("자식")
                 .contents("자식!")
@@ -180,8 +185,7 @@ class CommentServiceTest {
                 .build();
 
         child.changeParentComment(parent);
-        boardRepository.save(board);
-        commentRepository.saveAll(List.of(parent,child));
+        commentRepository.save(child);
 
         CommentChildRequest request = CommentChildRequest.builder()
                 .commentId(parent.getId())
