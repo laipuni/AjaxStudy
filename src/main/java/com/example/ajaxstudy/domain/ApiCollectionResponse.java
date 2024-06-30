@@ -1,9 +1,14 @@
 package com.example.ajaxstudy.domain;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 import java.util.Collection;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ApiCollectionResponse<T> {
 
     private int code;

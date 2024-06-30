@@ -1,8 +1,13 @@
 package com.example.ajaxstudy.domain.comment.response;
 
 import com.example.ajaxstudy.domain.comment.Comment;
+import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CommentChildResponse {
 
     private Long commentId;
