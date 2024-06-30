@@ -10,4 +10,7 @@ public interface CommentRepository extends JpaRepository<Comment,Long> {
     @Query(value = "select c from Comment as c where c.parent.id =:parentId order by c.id desc")
     public List<Comment> findAllByParentIdDesc(@Param("parentId") Long parentId);
 
+    @Query(value = "select c from Comment as c where c.parent is null and c.board.id =:boardId order by c.id desc")
+    public List<Comment> findAllByBoardIdAndNullDesc(@Param("boardId")Long boardId);
+
 }
