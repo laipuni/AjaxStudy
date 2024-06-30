@@ -38,8 +38,8 @@ public class CommentApiController {
 
     @GetMapping("/comment/{commentId}/reply")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ApiCollectionResponse<CommentChildResponse> getChild(@RequestBody CommentChildRequest request){
-        List<CommentChildResponse> childs = commentService.findAllByParentId(request);
+    public ApiCollectionResponse<CommentChildResponse> getChild(@PathVariable("commentId") Long commentId){
+        List<CommentChildResponse> childs = commentService.findAllByParentId(commentId);
         return ApiCollectionResponse.of(HttpStatus.ACCEPTED,childs);
     }
 }
