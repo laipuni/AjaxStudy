@@ -45,7 +45,9 @@ public class CommentService {
         return CommentReplyResponse.of(comment);
     }
 
-    public List<CommentChildResponse> findAllByParentId(CommentChildRequest request){
-        return null;
+    public List<CommentChildResponse> findAllByParentId(Long commentId){
+        return commentRepository.findAllByParentIdDesc(commentId).stream()
+                .map(CommentChildResponse::of)
+                .toList();
     }
 }
