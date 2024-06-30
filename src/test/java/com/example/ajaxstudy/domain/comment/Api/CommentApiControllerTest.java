@@ -18,8 +18,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(value = CommentController.class)
-class CommentControllerTest {
+@WebMvcTest(value = CommentApiController.class)
+class CommentApiControllerTest {
 
     @Autowired
     protected MockMvc mockMvc;

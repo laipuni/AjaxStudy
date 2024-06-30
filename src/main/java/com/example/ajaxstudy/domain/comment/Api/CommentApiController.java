@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-public class CommentController {
+public class CommentApiController {
 
     private final CommentService commentService;
 
