@@ -1,15 +1,20 @@
 package com.example.ajaxstudy.domain.comment.Api;
 
+import com.example.ajaxstudy.domain.ApiCollectionResponse;
 import com.example.ajaxstudy.domain.comment.CommentService;
 import com.example.ajaxstudy.domain.comment.request.CommentAddRequest;
+import com.example.ajaxstudy.domain.comment.request.CommentChildRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentReplyRequest;
 import com.example.ajaxstudy.domain.comment.response.CommentAddResponse;
+import com.example.ajaxstudy.domain.comment.response.CommentChildResponse;
 import com.example.ajaxstudy.domain.comment.response.CommentReplyResponse;
 import com.example.ajaxstudy.domain.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,4 +36,10 @@ public class CommentApiController {
         return ApiResponse.of(HttpStatus.CREATED,response);
     }
 
+    @GetMapping("/comment/{commentId}/reply")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ApiCollectionResponse<CommentChildResponse> getChild(@RequestBody CommentChildRequest request){
+        List<CommentChildResponse> childs = commentService.findAllByParentId(request);
+        return ApiCollectionResponse.of(HttpStatus.ACCEPTED,childs);
+    }
 }
