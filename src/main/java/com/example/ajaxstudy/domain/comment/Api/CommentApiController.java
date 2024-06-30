@@ -3,7 +3,6 @@ package com.example.ajaxstudy.domain.comment.Api;
 import com.example.ajaxstudy.domain.ApiCollectionResponse;
 import com.example.ajaxstudy.domain.comment.CommentService;
 import com.example.ajaxstudy.domain.comment.request.CommentAddRequest;
-import com.example.ajaxstudy.domain.comment.request.CommentChildRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentReplyRequest;
 import com.example.ajaxstudy.domain.comment.response.CommentAddResponse;
 import com.example.ajaxstudy.domain.comment.response.CommentChildResponse;
@@ -37,9 +36,9 @@ public class CommentApiController {
     }
 
     @GetMapping("/comment/{commentId}/reply")
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.OK)
     public ApiCollectionResponse<CommentChildResponse> getChild(@PathVariable("commentId") Long commentId){
         List<CommentChildResponse> childs = commentService.findAllByParentId(commentId);
-        return ApiCollectionResponse.of(HttpStatus.ACCEPTED,childs);
+        return ApiCollectionResponse.of(HttpStatus.OK,childs);
     }
 }
