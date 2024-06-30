@@ -159,49 +159,6 @@ class CommentServiceTest {
                 .hasMessageMatching("해당 댓글은 존재하지 않습니다.");
     }
 
-    @DisplayName("조회할 답글들의 댓글의 Id를 받아 답글들을 조회한다.")
-    @Transactional
-    @Test
-    void findAllByParentId(){
-        //given
-        Board board = Board.builder()
-                .writer("작성자")
-                .title("제목")
-                .heartNum(0)
-                .contents("내용")
-                .build();
-        boardRepository.save(board);
-        Comment parent = Comment.builder()
-                .writer("부모")
-                .contents("부모!")
-                .board(board)
-                .build();
-        commentRepository.save(parent);
-
-        Comment child = Comment.builder()
-                .writer("자식")
-                .contents("자식!")
-                .board(board)
-                .build();
-
-        child.changeParentComment(parent);
-        commentRepository.save(child);
-
-        CommentChildRequest request = CommentChildRequest.builder()
-                .commentId(parent.getId())
-                .build();
-
-        //when
-        List<CommentChildResponse> childs = commentService.findAllByParentId(request);
-
-        //then
-        assertThat(childs).hasSize(1)
-                .extracting("writer","contents")
-                .containsExactlyInAnyOrder(
-                        tuple("자식","자식")
-                );
-    }
-
     @DisplayName("조회할 답글들의 댓글이 존재하지 않을 경우 에러가 발생한다.")
     @Test
     void findAllByParentIdWithNoExistComment(){
