@@ -4,6 +4,7 @@ import com.example.ajaxstudy.domain.comment.CommentService;
 import com.example.ajaxstudy.domain.comment.request.CommentAddRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentReplyRequest;
 
+import com.example.ajaxstudy.domain.comment.response.CommentChildResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.util.List;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -267,5 +273,35 @@ class CommentApiControllerTest {
                 .andExpect(jsonPath("$.code").value(400))
                 .andExpect(jsonPath("$.message").value("해당 댓글은 존재하지 않습니다."))
                 .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @DisplayName("댓글의 Id를 받고, 해당 댓글의 답글들을 조회한 뒤 client로 응답한다.")
+    @Test
+    void getChild() throws Exception {
+        //given
+        Long commentId = 0L;
+        String writer = "작성자";
+        String contents = "내용";
+
+        Mockito.when(commentService.findAllByParentId(Mockito.any(Long.class)))
+                .thenReturn(List.of(CommentChildResponse.builder()
+                                .writer(writer)
+                                .contents(contents)
+                                .commentId(commentId)
+                                .build())
+                );
+
+        //when//then
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/comment/" + commentId + "/reply")
+        )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.size").value(1))
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data[0].writer").value(writer))
+                .andExpect(jsonPath("$.data[0].contents").value(contents));
     }
 }
