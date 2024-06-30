@@ -2,8 +2,6 @@ package com.example.ajaxstudy.domain.comment;
 
 import com.example.ajaxstudy.domain.board.Board;
 import com.example.ajaxstudy.domain.board.BoardRepository;
-import com.example.ajaxstudy.domain.comment.request.CommentChildRequest;
-import com.example.ajaxstudy.domain.comment.response.CommentChildResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -62,12 +60,8 @@ class CommentRepositoryTest {
         child.changeParentComment(parent);
         commentRepository.save(child);
 
-        CommentChildRequest request = CommentChildRequest.builder()
-                .commentId(board.getId())
-                .build();
-
         //when
-        List<Comment> childs = commentRepository.findAllByParentIdDesc(board.getId());
+        List<Comment> childs = commentRepository.findAllByParentIdDesc(parent.getId());
 
         //then
         assertThat(childs).hasSize(1)
