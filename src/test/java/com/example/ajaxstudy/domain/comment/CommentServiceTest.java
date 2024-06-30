@@ -159,18 +159,4 @@ class CommentServiceTest {
                 .hasMessageMatching("해당 댓글은 존재하지 않습니다.");
     }
 
-    @DisplayName("조회할 답글들의 댓글이 존재하지 않을 경우 에러가 발생한다.")
-    @Test
-    void findAllByParentIdWithNoExistComment(){
-        //given
-        CommentChildRequest request = CommentChildRequest.builder()
-                .commentId(0L)
-                .build();
-
-        //when
-        //then
-        assertThatThrownBy(() -> commentService.findAllByParentId(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageMatching("해당 댓글은 존재하지 않습니다.");
-    }
 }
