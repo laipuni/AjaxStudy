@@ -3,9 +3,9 @@ package com.example.ajaxstudy.domain.comment;
 import com.example.ajaxstudy.domain.board.Board;
 import com.example.ajaxstudy.domain.board.BoardRepository;
 import com.example.ajaxstudy.domain.comment.request.CommentAddRequest;
-import com.example.ajaxstudy.domain.comment.request.CommentChildRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentReplyRequest;
 import com.example.ajaxstudy.domain.comment.response.CommentAddResponse;
+import com.example.ajaxstudy.domain.comment.response.CommentBoardResponse;
 import com.example.ajaxstudy.domain.comment.response.CommentChildResponse;
 import com.example.ajaxstudy.domain.comment.response.CommentReplyResponse;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +48,12 @@ public class CommentService {
     public List<CommentChildResponse> findAllByParentId(Long commentId){
         return commentRepository.findAllByParentIdDesc(commentId).stream()
                 .map(CommentChildResponse::of)
+                .toList();
+    }
+
+    public List<CommentBoardResponse> findAllByBoardIdAndNullDesc(Long boardId){
+        return commentRepository.findAllByBoardIdAndNullDesc(boardId).stream()
+                .map(CommentBoardResponse::of)
                 .toList();
     }
 }
