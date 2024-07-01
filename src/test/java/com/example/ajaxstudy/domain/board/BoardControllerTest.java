@@ -3,6 +3,8 @@ package com.example.ajaxstudy.domain.board;
 import com.example.ajaxstudy.domain.board.Api.BoardController;
 import com.example.ajaxstudy.domain.board.response.BoardDetailResponse;
 import com.example.ajaxstudy.domain.board.response.BoardListResponse;
+import com.example.ajaxstudy.domain.comment.CommentService;
+import com.example.ajaxstudy.domain.comment.response.CommentBoardResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,6 +33,9 @@ class BoardControllerTest {
 
     @MockBean
     protected BoardService boardService;
+
+    @MockBean
+    protected CommentService commentService;
 
     @DisplayName("게시물들을 최신순으로 조회한다.")
     @Test
@@ -64,9 +69,16 @@ class BoardControllerTest {
                 .heartNum(0)
                 .contents("내용")
                 .build();
+        CommentBoardResponse boardResponse = CommentBoardResponse.builder()
+                .writer("라이푸니")
+                .commentId(0L)
+                .contents("댓글내용")
+                .build();
 
         Mockito.when(boardService.findById(Mockito.any(Long.class)))
                 .thenReturn(response);
+        Mockito.when(commentService.findAllByBoardIdAndNullDesc(Mockito.any(Long.class)))
+                .thenReturn(List.of(boardResponse));
 
         //when
         //then
