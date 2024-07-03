@@ -33,6 +33,7 @@ public class BoardController {
         List<CommentBoardResponse> comments = commentService.findAllByBoardIdAndNullDesc(boardId);
         model.addAttribute("board",board);
         model.addAttribute("comments",comments);
+        model.addAttribute("boardId",boardId);
         return "board/boardDetail";
     }
 
