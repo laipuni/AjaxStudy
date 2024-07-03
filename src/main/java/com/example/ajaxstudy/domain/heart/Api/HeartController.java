@@ -20,7 +20,7 @@ public class HeartController {
 
     @PostMapping("/heart")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<Object> addHeart(@Valid @RequestBody HeartAddRequest request){
+    public ApiResponse<HeartAddResponse> addHeart(@Valid @RequestBody HeartAddRequest request){
         HeartAddResponse heartAddResponse = heartService.addHeart(request);
         return ApiResponse.of(HttpStatus.CREATED,heartAddResponse);
     }
