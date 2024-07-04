@@ -4,16 +4,20 @@ import com.example.ajaxstudy.domain.board.Board;
 import com.example.ajaxstudy.domain.board.BoardRepository;
 import com.example.ajaxstudy.domain.comment.request.CommentAddRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentReplyRequest;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Profile;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
+@Profile("test")
 @SpringBootTest
 class CommentServiceTest {
 
@@ -153,4 +157,68 @@ class CommentServiceTest {
                 .hasMessageMatching("해당 댓글은 존재하지 않습니다.");
     }
 
+    @DisplayName("댓글을 Id를 받아와서 해당 Id에 댓글을 제거한다.")
+    @Test
+    void deleteByCommentId(){
+        //given
+        Board board = Board.builder()
+                .writer("게시글 작성한 라이푸니")
+                .heartNum(0)
+                .title("제목")
+                .contents("게시글 내용")
+                .build();
+
+        boardRepository.save(board);
+
+        Comment comment = Comment.builder()
+                .writer("댓글 작성한 라이푸니")
+                .contents("댓글 내용")
+                .board(board)
+                .build();
+        commentRepository.save(comment);
+
+        //when
+        commentService.deleteByCommentId(comment.getId());
+        List<Comment> comments = commentRepository.findAll();
+
+        //then
+        assertThat(comments).isEmpty();
+    }
+
+    @DisplayName("댓글을 Id를 받아와서 해당 Id에 댓글을 제거하고 답글들도 삭제한다.")
+    @Test
+    void deleteByCommentIdWithChild(){
+        //given
+        Board board = Board.builder()
+                .writer("게시글 작성한 라이푸니")
+                .heartNum(0)
+                .title("제목")
+                .contents("게시글 내용")
+                .build();
+
+        boardRepository.save(board);
+
+        Comment comment = Comment.builder()
+                .writer("댓글 작성한 라이푸니")
+                .contents("댓글 내용")
+                .board(board)
+                .build();
+        commentRepository.save(comment);
+
+        Comment child = Comment.builder()
+                .writer("답글 작성한 라이푸니")
+                .contents("답글 내용")
+                .board(board)
+                .build();
+
+        child.changeParentComment(comment);
+        commentRepository.save(child);
+
+        //when
+        commentService.deleteByCommentId(comment.getId());
+        List<Comment> comments = commentRepository.findAll();
+
+        //then
+        assertThat(comments).isEmpty();
+    }
 }
