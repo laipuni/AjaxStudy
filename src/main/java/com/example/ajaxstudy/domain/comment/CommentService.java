@@ -4,10 +4,7 @@ import com.example.ajaxstudy.domain.board.Board;
 import com.example.ajaxstudy.domain.board.BoardRepository;
 import com.example.ajaxstudy.domain.comment.request.CommentAddRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentReplyRequest;
-import com.example.ajaxstudy.domain.comment.response.CommentAddResponse;
-import com.example.ajaxstudy.domain.comment.response.CommentBoardResponse;
-import com.example.ajaxstudy.domain.comment.response.CommentChildResponse;
-import com.example.ajaxstudy.domain.comment.response.CommentReplyResponse;
+import com.example.ajaxstudy.domain.comment.response.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,5 +52,10 @@ public class CommentService {
         return commentRepository.findAllByBoardIdAndNullDesc(boardId).stream()
                 .map(CommentBoardResponse::of)
                 .toList();
+    }
+
+    @Transactional
+    public void deleteByCommentId(Long commentId){
+        commentRepository.deleteById(commentId);
     }
 }
