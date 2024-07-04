@@ -304,4 +304,25 @@ class CommentApiControllerTest {
                 .andExpect(jsonPath("$.data[0].writer").value(writer))
                 .andExpect(jsonPath("$.data[0].contents").value(contents));
     }
+
+    @DisplayName("댓글을 삭제 요청을 받아 댓글을 삭제한다.")
+    @Test
+    void deleteComment() throws Exception {
+        //given
+        Long commentId = 0L;
+        String data = objectMapper.writeValueAsString(commentId);
+        //when
+        //then
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/comment")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(data)
+        )
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isAccepted())
+                .andExpect(jsonPath("$.status").value("ACCEPTED"))
+                .andExpect(jsonPath("$.code").value(202))
+                .andExpect(jsonPath("$.data").isEmpty());
+
+    }
 }
