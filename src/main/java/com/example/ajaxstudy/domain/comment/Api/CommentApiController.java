@@ -41,4 +41,11 @@ public class CommentApiController {
         List<CommentChildResponse> childs = commentService.findAllByParentId(commentId);
         return ApiCollectionResponse.of(HttpStatus.OK,childs);
     }
+
+    @DeleteMapping("/comment")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ApiResponse<Object> deleteComment(@RequestBody Long commentId){
+        commentService.deleteByCommentId(commentId);
+        return ApiResponse.of(HttpStatus.ACCEPTED,null);
+    }
 }
