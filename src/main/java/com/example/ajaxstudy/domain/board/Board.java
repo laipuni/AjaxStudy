@@ -31,11 +31,11 @@ public class Board {
     @Column(nullable = false)
     private int heartNum;
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board",cascade = CascadeType.REMOVE)
     private List<Heart> hearts = new ArrayList<>();
 
     @BatchSize(size = 100)
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board",cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
 
     @Builder
