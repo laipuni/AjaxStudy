@@ -42,9 +42,11 @@
                     </div>
                     <button type="submit" class="mb-2 btn btn-primary btn-sm d-flex justify-content-start" th:text="#{label.submit}">제출</button>
                 </form>
+
+                <!--댓글 삽입 Div-->
                 <div id="commentResultDiv"></div>
                 <!--댓글 출력칸-->
-                <div class="mb-3" th:each="comment : ${comments}">
+                <div th:id="|comment${comment.commentId}|" class="mb-3" th:each="comment : ${comments}">
                     <div class="border"></div>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
@@ -55,6 +57,11 @@
                                 <a class="link-light">
                                     <!--||로 감싸야 인식한다-->
                                     <b th:onclick="|creatReplyInput(${comment.commentId})|" style="font-size: 0.8rem" th:text="#{label.reply}"></b>
+                                </a>
+                            </li>
+                            <li class='breadcrumb-item'>
+                            <a class='link-light'>
+                                <b th:onclick="|removeComment(${comment.commentId})|" style='font-size: 0.8rem'>삭제</b>
                                 </a>
                             </li>
                         </ol>
@@ -112,19 +119,24 @@
                             if(result.status.match("CREATED")){
                                 removeReplyInput(parentId)
                                 const reply =
-                                    "<div class='ms-4'>" +
+                                    "<div id='comment" + result.data.commentId +"' class='ms-4'>" +
                                         "<div class='border'></div>" +
                                         "<nav aria-label='breadcrumb'>" +
                                             "<ol class='breadcrumb'>" +
                                                 "<li class='breadcrumb-item'>" +
                                                     "<i class='bi bi-arrow-return-right'></i>" +
                                                    "<b style='font-size: 0.8rem'>" + result.data.writer + "</b>" +
-                                               "</li>" +
+                                                "</li>" +
                                                 "<li class='breadcrumb-item'>" +
                                                     "<a class='link-light'>" +
                                                         "<b onclick='creatReplyInput("+ result.data.commentId +")' style='font-size: 0.8rem'>답글</b>" +
                                                     "</a>" +
-                                               "</li>" +
+                                                "</li>" +
+                                                "<li class='breadcrumb-item'>" +
+                                                    "<a class='link-light'>" +
+                                                        "<b onclick='removeComment("+ result.data.commentId +")' style='font-size: 0.8rem'>삭제</b>" +
+                                                    "</a>" +
+                                                "</li>" +
                                            "</ol>" +
                                         "</nav>" +
                                         "<p>"+ result.data.content +"</p>" +
@@ -140,6 +152,26 @@
                             alert("fail!")
                         }
                     })
+                })
+            }
+
+            function removeComment(commentId){
+                $.ajax({
+                    url:"/comment",
+                    type:"delete",
+                    contentType:'application/json',
+                    dataType:'json',
+                    data:JSON.stringify(commentId),
+                    success:function (result){
+                        if(result.status.match("ACCEPTED")){
+                            $('#comment' + commentId).remove()
+                        } else {
+                            alert("fail! = " + result.status)
+                        }
+                    },
+                    error:function (){
+                        alert("fail!")
+                    }
                 })
             }
 
@@ -167,24 +199,30 @@
                         success:function (result){
                             if(result.status.match("CREATED")){
                                 const comment =
-                                    "<div id='commentResultDiv'></div>" +
-                                    "<div class='border'></div>" +
-                                    "<nav aria-label='breadcrumb'>" +
-                                        "<ol class='breadcrumb'>" +
-                                            "<li class='breadcrumb-item'>" +
-                                                "<b style='font-size: 0.8rem'>" + result.data.writer + "</b>" +
-                                            "</li>" +
-                                            "<li class='breadcrumb-item'>" +
-                                                "<a class='link-light'>" +
-                                                    "<b onclick='creatReplyInput("+ result.data.commentId +")' style='font-size: 0.8rem'>답글</b>" +
-                                                "</a>" +
-                                            "</li>" +
-                                        "</ol>" +
-                                    "</nav>" +
-                                    "<p>"+ result.data.content +"</p>" +
-                                    "<div id='ReplyInputDiv"+ result.data.commentId +"'></div>"
+                                    "<div id='comment" + result.data.commentId + "'>" +
+                                        "<div class='border'></div>" +
+                                        "<nav aria-label='breadcrumb'>" +
+                                            "<ol class='breadcrumb'>" +
+                                                "<li class='breadcrumb-item'>" +
+                                                    "<b style='font-size: 0.8rem'>" + result.data.writer + "</b>" +
+                                                "</li>" +
+                                                "<li class='breadcrumb-item'>" +
+                                                    "<a class='link-light'>" +
+                                                        "<b onclick='creatReplyInput("+ result.data.commentId +")' style='font-size: 0.8rem'>답글</b>" +
+                                                    "</a>" +
+                                                "</li>" +
+                                                "<li class='breadcrumb-item'>" +
+                                                    "<a class='link-light'>" +
+                                                        "<b onclick='removeComment("+ result.data.commentId +")' style='font-size: 0.8rem'>삭제</b>" +
+                                                    "</a>" +
+                                                "</li>" +
+                                            "</ol>" +
+                                        "</nav>" +
+                                        "<p>"+ result.data.content +"</p>" +
+                                        "<div id='ReplyInputDiv"+ result.data.commentId +"'></div>" +
+                                    "</div>"
 
-                                    $("#commentResultDiv").replaceWith(comment)
+                                    $("#commentResultDiv").after(comment)
                             } else{
                                 alert("fail code = " + result.code + "reason=" + result.message);
                             }
