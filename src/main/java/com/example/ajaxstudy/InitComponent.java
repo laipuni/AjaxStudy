@@ -6,11 +6,13 @@ import com.example.ajaxstudy.domain.comment.Comment;
 import com.example.ajaxstudy.domain.comment.CommentRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Profile("local")
 @Component
 @RequiredArgsConstructor
 public class InitComponent {
