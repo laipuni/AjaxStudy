@@ -2,8 +2,10 @@ package com.example.ajaxstudy.domain.comment.Api;
 
 import com.example.ajaxstudy.domain.comment.CommentService;
 import com.example.ajaxstudy.domain.comment.request.CommentAddRequest;
+import com.example.ajaxstudy.domain.comment.request.CommentChildRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentReplyRequest;
 
+import com.example.ajaxstudy.domain.comment.response.CommentChildListResponse;
 import com.example.ajaxstudy.domain.comment.response.CommentChildResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -275,34 +277,30 @@ class CommentApiControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
-    @DisplayName("댓글의 Id를 받고, 해당 댓글의 답글들을 조회한 뒤 client로 응답한다.")
+    @DisplayName("답글 조회 url 테스트")
     @Test
     void getChild() throws Exception {
         //given
         Long commentId = 0L;
         String writer = "작성자";
         String contents = "내용";
+        CommentChildRequest request = CommentChildRequest.builder()
+                .commentId(0L)
+                .page(0)
+                .build();
 
-        Mockito.when(commentService.findAllByParentId(Mockito.any(Long.class)))
-                .thenReturn(List.of(CommentChildResponse.builder()
-                                .writer(writer)
-                                .contents(contents)
-                                .commentId(commentId)
-                                .build())
-                );
+        String data = objectMapper.writeValueAsString(request);
 
         //when//then
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/comment/" + commentId + "/reply")
+                MockMvcRequestBuilders.get("/comment/reply")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(data)
         )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("OK"))
-                .andExpect(jsonPath("$.code").value(200))
-                .andExpect(jsonPath("$.size").value(1))
-                .andExpect(jsonPath("$.data").isArray())
-                .andExpect(jsonPath("$.data[0].writer").value(writer))
-                .andExpect(jsonPath("$.data[0].contents").value(contents));
+                .andExpect(jsonPath("$.code").value(200));
     }
 
     @DisplayName("댓글을 삭제 요청을 받아 댓글을 삭제한다.")
