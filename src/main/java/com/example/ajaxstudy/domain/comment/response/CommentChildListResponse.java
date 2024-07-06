@@ -1,6 +1,5 @@
 package com.example.ajaxstudy.domain.comment.response;
 
-import com.example.ajaxstudy.domain.comment.Comment;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,24 +14,23 @@ public class CommentChildListResponse {
 
     private int size;
     private int page;
+    private boolean hasNext;
     private List<CommentChildResponse> childList;
 
     @Builder
-    private CommentChildListResponse(final int size, final int page, final List<CommentChildResponse> childList) {
+    private CommentChildListResponse(final int size, final int page,final boolean hasNext, final List<CommentChildResponse> childList) {
         this.size = size;
         this.page = page;
+        this.hasNext = hasNext;
         this.childList = childList;
     }
 
-    public static CommentChildListResponse of(Slice<Comment> comments){
+    public static CommentChildListResponse of(Slice<CommentChildResponse> comments){
         return CommentChildListResponse.builder()
                 .size(comments.getNumberOfElements())
                 .page(comments.getNumber())
-                .childList(
-                        comments.getContent().stream()
-                                .map(CommentChildResponse::of)
-                                .toList()
-                )
+                .hasNext(comments.hasNext())
+                .childList(comments.getContent())
                 .build();
     }
 }
