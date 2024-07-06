@@ -1,5 +1,6 @@
 package com.example.ajaxstudy.domain.comment.request;
 
+import jakarta.validation.constraints.Positive;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,6 +11,8 @@ import lombok.NoArgsConstructor;
 public class CommentChildRequest {
 
     private Long commentId;
+
+    @Positive(message = "해당하는 page가 없습니다.")
     private int page;
 
     @Builder
