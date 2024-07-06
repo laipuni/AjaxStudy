@@ -4,9 +4,6 @@ import com.example.ajaxstudy.domain.comment.CommentService;
 import com.example.ajaxstudy.domain.comment.request.CommentAddRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentChildRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentReplyRequest;
-
-import com.example.ajaxstudy.domain.comment.response.CommentChildListResponse;
-import com.example.ajaxstudy.domain.comment.response.CommentChildResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,10 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -115,7 +109,7 @@ class CommentApiControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
-    @DisplayName("작성자이름없이 댓글을 작성할 경우, 에러가 발생한다.")
+    @DisplayName("작성자 이름없이 댓글을 작성할 경우, 에러가 발생한다.")
     @Test
     void addCommentWithBlankWriter() throws Exception {
         //given
@@ -281,9 +275,6 @@ class CommentApiControllerTest {
     @Test
     void getChild() throws Exception {
         //given
-        Long commentId = 0L;
-        String writer = "작성자";
-        String contents = "내용";
         CommentChildRequest request = CommentChildRequest.builder()
                 .commentId(0L)
                 .page(0)
@@ -302,6 +293,32 @@ class CommentApiControllerTest {
                 .andExpect(jsonPath("$.status").value("OK"))
                 .andExpect(jsonPath("$.code").value(200));
     }
+
+    @DisplayName("답글 조회할 때 page 값이 음수일 경우 에러가 발생한다.")
+    @Test
+    void getChildWithNegativePage() throws Exception {
+        //given
+        CommentChildRequest request = CommentChildRequest.builder()
+                .commentId(0L)
+                .page(-1)
+                .build();
+
+        String data = objectMapper.writeValueAsString(request);
+
+        //when//then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/comment/reply")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(data)
+                )
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("해당하는 page가 없습니다."))
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+
 
     @DisplayName("댓글을 삭제 요청을 받아 댓글을 삭제한다.")
     @Test
