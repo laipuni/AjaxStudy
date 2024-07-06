@@ -35,7 +35,7 @@ public class CommentApiController {
 
     @GetMapping("/comment/reply")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<CommentChildListResponse> getChild(@ModelAttribute CommentChildRequest request){
+    public ApiResponse<CommentChildListResponse> getChild(@Valid @ModelAttribute CommentChildRequest request){
         CommentChildListResponse children = commentService.findAllByParentId(request);
         return ApiResponse.of(HttpStatus.OK,children);
     }
