@@ -1,8 +1,10 @@
 package com.example.ajaxstudy.domain.comment;
 
+import com.example.ajaxstudy.domain.PageAbleFactory;
 import com.example.ajaxstudy.domain.board.Board;
 import com.example.ajaxstudy.domain.board.BoardRepository;
 import com.example.ajaxstudy.domain.comment.request.CommentAddRequest;
+import com.example.ajaxstudy.domain.comment.request.CommentChildRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentReplyRequest;
 import com.example.ajaxstudy.domain.comment.response.*;
 import lombok.RequiredArgsConstructor;
@@ -42,10 +44,11 @@ public class CommentService {
         return CommentReplyResponse.of(comment);
     }
 
-    public List<CommentChildResponse> findAllByParentId(Long commentId){
-        return commentRepository.findAllByParentIdDesc(commentId).stream()
-                .map(CommentChildResponse::of)
-                .toList();
+    public CommentChildListResponse findAllByParentId(CommentChildRequest request){
+        return CommentChildListResponse.of(commentRepository.findAllByParentIdDesc(
+                request.getCommentId(),
+                PageAbleFactory.create(request.getPage(), 10,"Id",PageAbleFactory.DESC)
+        ));
     }
 
     public List<CommentBoardResponse> findAllByBoardIdAndNullDesc(Long boardId){
@@ -58,4 +61,5 @@ public class CommentService {
     public void deleteByCommentId(Long commentId){
         commentRepository.deleteById(commentId);
     }
+
 }
