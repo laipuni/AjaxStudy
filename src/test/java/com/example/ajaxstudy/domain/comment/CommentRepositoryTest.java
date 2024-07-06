@@ -3,11 +3,13 @@ package com.example.ajaxstudy.domain.comment;
 import com.example.ajaxstudy.domain.board.Board;
 import com.example.ajaxstudy.domain.board.BoardRepository;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -26,7 +28,7 @@ class CommentRepositoryTest {
     @Autowired
     protected BoardRepository boardRepository;
 
-    @DisplayName("조회할 답글들의 댓글의 Id를 받아 답글들을 조회한다.")
+    @DisplayName("조회할 답글들의 댓글의 Id, page값을 받아 답글들을 10개씩 최신순으로 조회한다.")
     @Test
     void findAllByParentIdDesc(){
         //given
@@ -43,7 +45,7 @@ class CommentRepositoryTest {
                 .board(board)
                 .build();
         commentRepository.save(parent);
-        
+
         String writer = "자식";
         String contents = "자식";
         Comment child = Comment.builder()
@@ -54,12 +56,15 @@ class CommentRepositoryTest {
 
         child.changeParentComment(parent);
         commentRepository.save(child);
+        Long commentId = parent.getId();
+        Sort.Order order = Sort.Order.desc("Id");
+        PageRequest pageRequest = PageRequest.of(0,10,Sort.by(order));
 
         //when
-        List<Comment> childs = commentRepository.findAllByParentIdDesc(parent.getId());
+        Slice<Comment> childs = commentRepository.findAllByParentIdDesc(commentId,pageRequest);
 
         //then
-        assertThat(childs).hasSize(1)
+        assertThat(childs.getContent()).hasSize(1)
                 .extracting("writer","contents")
                 .containsExactlyInAnyOrder(
                         tuple("자식","자식")
