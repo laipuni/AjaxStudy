@@ -19,6 +19,7 @@ import java.util.List;
 public class CommentService {
 
     private final CommentRepository commentRepository;
+    private final CommentQuerydslRepository commentQuerydslRepository;
 
     private final BoardRepository boardRepository;
 
@@ -45,7 +46,7 @@ public class CommentService {
     }
 
     public CommentChildListResponse findAllByParentId(CommentChildRequest request){
-        return CommentChildListResponse.of(commentRepository.findAllByParentIdDesc(
+        return CommentChildListResponse.of(commentQuerydslRepository.findAllByParentIdDesc(
                 request.getCommentId(),
                 PageAbleFactory.create(request.getPage(), 10,"Id",PageAbleFactory.DESC)
         ));
