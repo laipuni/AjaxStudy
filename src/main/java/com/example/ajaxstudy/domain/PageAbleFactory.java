@@ -16,4 +16,7 @@ public class PageAbleFactory {
         return PageRequest.of(page,pageSize,by(order));
     }
 
+    public static Pageable create(int page, int pageSize){
+        return PageRequest.of(page,pageSize);
+    }
 }
