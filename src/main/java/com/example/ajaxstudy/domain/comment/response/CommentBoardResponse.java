@@ -1,6 +1,6 @@
 package com.example.ajaxstudy.domain.comment.response;
 
-import com.example.ajaxstudy.domain.comment.Comment;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,19 +13,15 @@ public class CommentBoardResponse {
     private Long commentId;
     private String writer;
     private String contents;
+    private int childNum;
 
     @Builder
-    private CommentBoardResponse(final Long commentId, final String writer, final String contents) {
+    @QueryProjection
+    public CommentBoardResponse(final Long commentId, final String writer, final String contents,final int childNum) {
         this.commentId = commentId;
         this.writer = writer;
         this.contents = contents;
+        this.childNum = childNum;
     }
 
-    public static CommentBoardResponse of(final Comment comment) {
-        return CommentBoardResponse.builder()
-                .commentId(comment.getId())
-                .contents(comment.getContents())
-                .writer(comment.getWriter())
-                .build();
-    }
 }
