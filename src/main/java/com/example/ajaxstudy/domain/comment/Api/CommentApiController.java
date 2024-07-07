@@ -1,5 +1,6 @@
 package com.example.ajaxstudy.domain.comment.Api;
 
+import com.example.ajaxstudy.domain.ApiResponse;
 import com.example.ajaxstudy.domain.comment.CommentService;
 import com.example.ajaxstudy.domain.comment.request.CommentAddRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentChildRequest;
@@ -7,7 +8,6 @@ import com.example.ajaxstudy.domain.comment.request.CommentReplyRequest;
 import com.example.ajaxstudy.domain.comment.response.CommentAddResponse;
 import com.example.ajaxstudy.domain.comment.response.CommentChildListResponse;
 import com.example.ajaxstudy.domain.comment.response.CommentReplyResponse;
-import com.example.ajaxstudy.domain.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,7 +35,7 @@ public class CommentApiController {
 
     @GetMapping("/comment/reply")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<CommentChildListResponse> getChild(@Valid @ModelAttribute CommentChildRequest request){
+    public ApiResponse<CommentChildListResponse> getChild(@Valid @RequestBody CommentChildRequest request){
         CommentChildListResponse children = commentService.findAllByParentId(request);
         return ApiResponse.of(HttpStatus.OK,children);
     }
