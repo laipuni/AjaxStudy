@@ -4,14 +4,16 @@ import com.example.ajaxstudy.domain.PageAbleFactory;
 import com.example.ajaxstudy.domain.board.Board;
 import com.example.ajaxstudy.domain.board.BoardRepository;
 import com.example.ajaxstudy.domain.comment.request.CommentAddRequest;
+import com.example.ajaxstudy.domain.comment.request.CommentBoardRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentChildRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentReplyRequest;
-import com.example.ajaxstudy.domain.comment.response.*;
+import com.example.ajaxstudy.domain.comment.response.CommentAddResponse;
+import com.example.ajaxstudy.domain.comment.response.CommentBoardListResponse;
+import com.example.ajaxstudy.domain.comment.response.CommentChildListResponse;
+import com.example.ajaxstudy.domain.comment.response.CommentReplyResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -48,14 +50,15 @@ public class CommentService {
     public CommentChildListResponse findAllByParentId(CommentChildRequest request){
         return CommentChildListResponse.of(commentQuerydslRepository.findAllByParentIdDesc(
                 request.getCommentId(),
-                PageAbleFactory.create(request.getPage(), 10,"Id",PageAbleFactory.DESC)
+                PageAbleFactory.create(request.getPage(), 10)
         ));
     }
 
-    public List<CommentBoardResponse> findAllByBoardIdAndNullDesc(Long boardId){
-        return commentRepository.findAllByBoardIdAndNullDesc(boardId).stream()
-                .map(CommentBoardResponse::of)
-                .toList();
+    public CommentBoardListResponse findAllByBoardIdAndNullDesc(CommentBoardRequest request){
+        return CommentBoardListResponse.of(commentQuerydslRepository.findAllByBoardIdAndNullDesc(
+                request.getBoardId(),
+                PageAbleFactory.create(request.getPage(),10)
+        ));
     }
 
     @Transactional
