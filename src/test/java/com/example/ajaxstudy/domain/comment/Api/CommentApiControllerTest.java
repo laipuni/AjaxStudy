@@ -2,8 +2,11 @@ package com.example.ajaxstudy.domain.comment.Api;
 
 import com.example.ajaxstudy.domain.comment.CommentService;
 import com.example.ajaxstudy.domain.comment.request.CommentAddRequest;
+import com.example.ajaxstudy.domain.comment.request.CommentBoardRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentChildRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentReplyRequest;
+import com.example.ajaxstudy.domain.comment.response.CommentAddResponse;
+import com.example.ajaxstudy.domain.comment.response.CommentBoardListResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +35,58 @@ class CommentApiControllerTest {
     @MockBean
     protected CommentService commentService;
 
+    @DisplayName("게시판 댓글 조회 Api 테스트")
+    @Test
+    void getComment() throws Exception {
+        //given
+        CommentBoardRequest request = CommentBoardRequest.builder()
+                .boardId(0L)
+                .page(0)
+                .build();
+
+        String data = objectMapper.writeValueAsString(request);
+
+        Mockito.when(commentService.findAllByBoardIdAndNullDesc(Mockito.any(CommentBoardRequest.class)))
+                .thenReturn(Mockito.any(CommentBoardListResponse.class));
+        //when
+        //then
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/comment")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(data)
+        )
+                .andDo(print())
+                .andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.status").value("ACCEPTED"))
+                .andExpect(jsonPath("$.code").value(202));
+    }
+
+    @DisplayName("게시판 댓글 요청에 page가 음수로 넘어올 경우 에러가 발생한다.")
+    @Test
+    void getCommentWithNegativePage() throws Exception {
+        //given
+        CommentBoardRequest request = CommentBoardRequest.builder()
+                .boardId(0L)
+                .page(-1)
+                .build();
+
+        String data = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/comment")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(data)
+                )
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("해당하는 page가 없습니다."))
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+
     @DisplayName("해당 게시글에 댓글을 작성할 경우, 댓글을 등록하고 결과를 반환한다.")
     @Test
     void addComment() throws Exception {
@@ -43,6 +98,9 @@ class CommentApiControllerTest {
                 .build();
         String data = objectMapper.writeValueAsString(request);
 
+        Mockito.when(commentService.record(Mockito.any(CommentAddRequest.class)))
+                        .thenReturn(Mockito.any(CommentAddResponse.class));
+
         //when//then
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/comment")
@@ -52,9 +110,8 @@ class CommentApiControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status").value("CREATED"))
-                .andExpect(jsonPath("$.code").value(201))
-                .andExpect(jsonPath("$.data").isEmpty());
-    }
+                .andExpect(jsonPath("$.code").value(201));
+   }
 
     @DisplayName("존재하지 않는 게시글에 댓글을 작성할 경우, 에러가 발생한다.")
     @Test
