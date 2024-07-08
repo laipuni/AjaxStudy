@@ -1,20 +1,21 @@
 package com.example.ajaxstudy.domain.comment.Api;
 
+import com.example.ajaxstudy.domain.ApiResponse;
 import com.example.ajaxstudy.domain.comment.CommentService;
 import com.example.ajaxstudy.domain.comment.request.CommentAddRequest;
-import com.example.ajaxstudy.domain.comment.request.CommentBoardRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentChildRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentReplyRequest;
 import com.example.ajaxstudy.domain.comment.response.CommentAddResponse;
 import com.example.ajaxstudy.domain.comment.response.CommentBoardListResponse;
 import com.example.ajaxstudy.domain.comment.response.CommentChildListResponse;
 import com.example.ajaxstudy.domain.comment.response.CommentReplyResponse;
-import com.example.ajaxstudy.domain.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class CommentApiController {
@@ -23,8 +24,8 @@ public class CommentApiController {
 
     @GetMapping("/comment")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ApiResponse<CommentBoardListResponse> getComment(@Valid @RequestBody CommentBoardRequest request){
-        CommentBoardListResponse comments = commentService.findAllByBoardIdAndNullDesc(request);
+    public ApiResponse<CommentBoardListResponse> getComment(@RequestParam("boardId")Long boardId, @RequestParam("page")int page){
+        CommentBoardListResponse comments = commentService.findAllByBoardIdAndNullDesc(boardId, page);
         return ApiResponse.of(HttpStatus.ACCEPTED,comments);
     }
 
