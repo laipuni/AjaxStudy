@@ -31,7 +31,7 @@
 
             <div class="border"></div>
             <!-- 댓글 입력창 -->
-            <form id="commentInput">
+            <form id="commentInput" class="mb-3">
                 <div class="mb-3">
                     <label style="font-size: 0.8rem" for="writer" class="form-label" th:text="#{label.writer}"></label>
                     <input id="writer" class="form-control" type="text">
@@ -40,34 +40,14 @@
                     <label style="font-size: 0.8rem" for="contents" class="form-label" th:text="#{label.contents}"></label>
                     <textarea id="contents" class="form-control" rows="3"></textarea>
                 </div>
-                <button type="submit" class="mb-2 btn btn-primary btn-sm d-flex justify-content-start" th:text="#{label.submit}">제출</button>
+                <button type="submit" class="btn btn-primary btn-sm d-flex justify-content-start" th:text="#{label.submit}">제출</button>
             </form>
 
             <!-- 댓글 삽입 Div -->
-            <div id="commentResultDiv"></div>
-            <!-- 댓글 출력칸 -->
-            <div th:id="|comment${comment.commentId}|" class="mb-3" th:each="comment : ${comments}">
-                <div class="border"></div>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <b style="font-size: 0.8rem" th:text="${comment.writer}"></b>
-                        </li>
-                        <li class="breadcrumb-item">
-                            <a class="link-light">
-                                <b th:onclick="|creatReplyInput(${comment.commentId})|" style="font-size: 0.8rem" th:text="#{label.reply}"></b>
-                            </a>
-                        </li>
-                        <li class='breadcrumb-item'>
-                            <a class='link-light'>
-                                <b th:onclick="|removeComment(${comment.commentId})|" style='font-size: 0.8rem'>삭제</b>
-                            </a>
-                        </li>
-                    </ol>
-                </nav>
-                <p th:text="${comment.contents}"></p>
-                <div th:id="|ReplyInputDiv${comment.commentId}|"></div>
+            <div id="commentResultDiv">
+                <div id="commentSpinner" class="spinner-border d-flex justify-content-center " role="status"></div>
             </div>
+            <!-- 댓글 출력칸 -->
         </div>
     </main>
 
@@ -119,7 +99,7 @@
                         if (result.status.match("CREATED")) {
                             removeReplyInput(parentId);
                             const reply = `
-                                    <div id='comment${result.data.commentId}' class='ms-4'>
+                                    <div id='comment${result.data.commentId}' class='ms-3'>
                                         <div class='border'></div>
                                         <nav aria-label='breadcrumb'>
                                             <ol class='breadcrumb'>
@@ -219,7 +199,7 @@
                                         <p>${result.data.content}</p>
                                         <div id='ReplyInputDiv${result.data.commentId}'></div>
                                     </div>`
-                            $("#commentResultDiv").append(comment);
+                            $("#commentResultDiv").prepend(comment);
                         } else {
                             alert("fail! " + result.message);
                         }
