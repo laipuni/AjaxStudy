@@ -27,7 +27,7 @@ public class CommentBoardListResponse {
 
     public static CommentBoardListResponse of(Slice<CommentBoardResponse> contents){
         return CommentBoardListResponse.builder()
-                .size(contents.getSize())
+                .size(contents.getNumberOfElements())
                 .page(contents.getNumber())
                 .hasNext(contents.hasNext())
                 .comments(contents.getContent())
