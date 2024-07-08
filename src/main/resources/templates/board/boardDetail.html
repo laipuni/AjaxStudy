@@ -156,9 +156,38 @@
     </script>
 
     <script th:inline="javascript">
+        let hasNext = false;
+        let page = 0;
+        const boardId = [[${boardId}]];
+
+        function createComment(commentId, writer,content){
+            return `
+                        <div id="comment${commentId}">
+                            <div class='border'></div>
+                            <nav aria-label='breadcrumb'>
+                                <ol class='breadcrumb'>
+                                    <li class='breadcrumb-item'>
+                                        <b style='font-size: 0.8rem'>${writer}</b>
+                                    </li>
+                                    <li class='breadcrumb-item'>
+                                        <a class='link-light'>
+                                            <b onclick='creatReplyInput(${commentId})' style='font-size: 0.8rem'>답장</b>
+                                        </a>
+                                    </li>
+                                    <li class='breadcrumb-item'>
+                                        <a class='link-light'>
+                                            <b onclick="removeComment(${commentId})" style='font-size: 0.8rem'>삭제</b>
+                                        </a>
+                                    </li>
+                                </ol>
+                            </nav>
+                            <p>${content}</p>
+                            <div id="ReplyInputDiv${commentId}"></div>
+                        </div>`
+        }
+
         $(document).ready(function () {
             $(document).on('submit', "#commentInput", function (event) {
-                const boardId = [[${boardId}]];
                 const writer = $("#writer", this).val();
                 const contents = $("#contents", this).val();
                 $("#writer", this).val(""); // 작성자 입력칸 초기화
@@ -176,30 +205,9 @@
                     }),
                     success: function (result) {
                         if (result.status.match("CREATED")) {
-                            const comment = `
-                                    <div id='comment${result.data.commentId}'>
-                                        <div class='border'></div>
-                                        <nav aria-label='breadcrumb'>
-                                            <ol class='breadcrumb'>
-                                                <li class='breadcrumb-item'>
-                                                    <b style='font-size: 0.8rem'>${result.data.writer}</b>
-                                                </li>
-                                                <li class='breadcrumb-item'>
-                                                    <a class='link-light'>
-                                                        <b onclick='creatReplyInput(${result.data.commentId})' style='font-size: 0.8rem'>답글</b>
-                                                    </a>
-                                                </li>
-                                                <li class='breadcrumb-item'>
-                                                    <a class='link-light'>
-                                                        <b onclick='removeComment(${result.data.commentId})' style='font-size: 0.8rem'>삭제</b>
-                                                    </a>
-                                                </li>
-                                            </ol>
-                                        </nav>
-                                        <p>${result.data.content}</p>
-                                        <div id='ReplyInputDiv${result.data.commentId}'></div>
-                                    </div>`
-                            $("#commentResultDiv").prepend(comment);
+                            $("#commentResultDiv").prepend(
+                                createComment(result.data.commentId,result.data.writer,result.data.content)
+                            );
                         } else {
                             alert("fail! " + result.message);
                         }
@@ -210,10 +218,8 @@
                 });
             });
         });
-
         // 좋아요 ajax javascript
         $(document).on('click',"#heartClick",function (event){
-            const boardId = [[${boardId}]];
             event.preventDefault();
             $.ajax({
                 url:'/heart',
@@ -239,43 +245,50 @@
             });
         });
         //페이지 로딩 후 댓글을 불러옴
+
         $(window).on('load',function (){
-            const boardId = [[${boardId}]];
-            $.get("/comment",{boardId: boardId, page : 0})
+            $.get("/comment",{boardId: boardId, page : page})
                 .done(function (result){
                     $("#commentSpinner").remove()
                     $.each(result.data.comments, function (index,comment){
-                        const commentDiv = `
-                        <div id="comment${comment.commentId}">
-                            <div class='border'></div>
-                            <nav aria-label='breadcrumb'>
-                                <ol class='breadcrumb'>
-                                    <li class='breadcrumb-item'>
-                                        <b style='font-size: 0.8rem'>${comment.writer}</b>
-                                    </li>
-                                    <li class='breadcrumb-item'>
-                                        <a class='link-light'>
-                                            <b onclick='creatReplyInput(${comment.commentId})' style='font-size: 0.8rem'>답장</b>
-                                        </a>
-                                    </li>
-                                    <li class='breadcrumb-item'>
-                                        <a class='link-light'>
-                                            <b onclick="removeComment(${comment.commentId})" style='font-size: 0.8rem'>삭제</b>
-                                        </a>
-                                    </li>
-                                </ol>
-                            </nav>
-                            <p>${comment.contents}</p>
-                            <div id="ReplyInputDiv${comment.commentId}"></div>
-                        </div>`
-                        $("#commentResultDiv").append(commentDiv)
+                        $("#commentResultDiv").append(
+                            createComment(comment.commentId,comment.writer,comment.contents)
+                        )
                     })
+                    page = result.data.page + 1
+                    hasNext = result.data.hasNext
                 })
                 .fail(function (){
                     alert("fail!")
                 })
         })
-
+        //첫번째 로딩 후 마지막 댓글까지 스크롤 했다면 다음 댓글 불러옴
+        function detectBottom() {
+            var scrollTop = $(window).scrollTop();
+            var innerHeight = $(window).innerHeight();
+            var scrollHeight = $('body').prop('scrollHeight');
+            if (scrollTop + innerHeight >= scrollHeight) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        $(window).on('scroll',function (){
+            if(detectBottom() && hasNext){
+                $("#commentResultDiv").append(`<div id='commentSpinner' class='spinner-border' role='status'></div>`)
+                $.get("/comment",{boardId: boardId, page: page})
+                    .done(function (result){
+                        $("#commentSpinner").remove()
+                        $.each(result.data.comments, function (index,comment){
+                            $("#commentResultDiv").append(
+                                createComment(comment.commentId,comment.writer,comment.contents)
+                            )
+                        })
+                        page = result.data.page + 1
+                        hasNext = result.data.hasNext
+                    })
+            }
+        })
     </script>
 </div>
 </body>
