@@ -36,12 +36,15 @@ public class InitComponent {
                 .writer("라이푸니")
                 .contents("부모 댓글")
                 .build();
-        Comment parent2 = Comment.builder()
-                .board(board)
-                .writer("라이푸니2")
-                .contents("부모2 댓글")
-                .build();
-        commentRepository.saveAll(List.of(parent,parent2));
+        commentRepository.saveAll(List.of(parent));
+        for (int i = 0; i < 20; i++) {
+            Comment comment = Comment.builder()
+                    .board(board)
+                    .writer("라이푸니" + i)
+                    .contents("부모"+ i +" 댓글")
+                    .build();
+            commentRepository.saveAll(List.of(comment));
+        }
 
         Comment child = Comment.builder()
                 .board(board)
