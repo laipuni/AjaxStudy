@@ -121,8 +121,9 @@
                                         </nav>
                                         <p>${result.data.content}</p>
                                         <div id='ReplyInputDiv${result.data.commentId}'></div>
+                                        <div id='ReplyResultDiv${result.data.commentId}'></div>
                                     </div>`;
-                            $("#ReplyInputDiv" + parentId).after(reply);
+                            $("#ReplyResultDiv" + parentId).prepend(reply);
                         } else {
                             alert("fail" + result.message);
                         }
@@ -183,6 +184,7 @@
                             </nav>
                             <p>${content}</p>
                             <div id="ReplyInputDiv${commentId}"></div>
+                            <div id='ReplyResultDiv${commentId}'></div>
                         </div>`
         }
 
