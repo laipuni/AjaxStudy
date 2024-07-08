@@ -4,6 +4,7 @@ import com.example.ajaxstudy.domain.board.Api.BoardController;
 import com.example.ajaxstudy.domain.board.response.BoardDetailResponse;
 import com.example.ajaxstudy.domain.board.response.BoardListResponse;
 import com.example.ajaxstudy.domain.comment.CommentService;
+import com.example.ajaxstudy.domain.comment.response.CommentBoardListResponse;
 import com.example.ajaxstudy.domain.comment.response.CommentBoardResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -77,8 +78,8 @@ class BoardControllerTest {
 
         Mockito.when(boardService.findById(Mockito.any(Long.class)))
                 .thenReturn(response);
-        Mockito.when(commentService.findAllByBoardIdAndNullDesc(Mockito.any(Long.class)))
-                .thenReturn(List.of(boardResponse));
+        Mockito.when(commentService.findAllByBoardIdAndNullDesc(Mockito.any(Long.class),Mockito.any(int.class)))
+                .thenReturn(Mockito.any(CommentBoardListResponse.class));
 
         //when
         //then
