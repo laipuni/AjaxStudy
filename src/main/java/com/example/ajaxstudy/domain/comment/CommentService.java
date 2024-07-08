@@ -4,7 +4,6 @@ import com.example.ajaxstudy.domain.PageAbleFactory;
 import com.example.ajaxstudy.domain.board.Board;
 import com.example.ajaxstudy.domain.board.BoardRepository;
 import com.example.ajaxstudy.domain.comment.request.CommentAddRequest;
-import com.example.ajaxstudy.domain.comment.request.CommentBoardRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentChildRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentReplyRequest;
 import com.example.ajaxstudy.domain.comment.response.CommentAddResponse;
@@ -54,10 +53,10 @@ public class CommentService {
         ));
     }
 
-    public CommentBoardListResponse findAllByBoardIdAndNullDesc(CommentBoardRequest request){
+    public CommentBoardListResponse findAllByBoardIdAndNullDesc(Long boardId, int page){
         return CommentBoardListResponse.of(commentQuerydslRepository.findAllByBoardIdAndNullDesc(
-                request.getBoardId(),
-                PageAbleFactory.create(request.getPage(),10)
+                boardId,
+                PageAbleFactory.create(page,10)
         ));
     }
 
