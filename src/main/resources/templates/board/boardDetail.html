@@ -8,261 +8,257 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <div class="container w-50">
-        <header class="mb-3">
-            <div class="mb-5">
-                <a class="btn btn-secondary btn-sm" th:href="@{/boards}">이전</a>
+<div class="container w-50">
+    <header class="mb-3">
+        <div class="mb-5">
+            <a class="btn btn-secondary btn-sm" th:href="@{/boards}">이전</a>
+        </div>
+        <h5 class="d-flex justify-content-start" th:text="${board.title}">제목</h5>
+        <span style="font-size: 0.8rem" th:text="${board.writer}">작성자</span>
+        <div class="border"></div>
+    </header>
+    <main>
+        <div>
+            <p class="mb-lg-5" th:text="${board.contents}">게시글 내용</p>
+
+            <!-- 좋아요 -->
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-sm">
+                    <i id="heartClick" class="bi bi-hand-thumbs-up"></i>
+                </button>
+                <span id="heartNum" style="font-size: 0.8rem" th:text="${board.heartNum}"></span>
             </div>
-            <h5 class="d-flex justify-content-start" th:text="${board.title}">제목</h5>
-            <span style="font-size: 0.8rem" th:text="${board.writer}">작성자</span>
+
             <div class="border"></div>
-        </header>
-        <main>
-            <div>
-                <p class="mb-lg-5" th:text="${board.contents}">게시글 내용</p>
-
-                <!--좋아요-->
-                <div class="d-flex justify-content-end">
-                    <button class="btn btn-sm">
-                        <i id="heartClick" class="bi bi-hand-thumbs-up"></i>
-                    </button>
-                    <span id="heartNum" style="font-size: 0.8rem" th:text="${board.heartNum}"></span>
+            <!-- 댓글 입력창 -->
+            <form id="commentInput">
+                <div class="mb-3">
+                    <label style="font-size: 0.8rem" for="writer" class="form-label" th:text="#{label.writer}"></label>
+                    <input id="writer" class="form-control" type="text">
                 </div>
+                <div class="mb-3">
+                    <label style="font-size: 0.8rem" for="contents" class="form-label" th:text="#{label.contents}"></label>
+                    <textarea id="contents" class="form-control" rows="3"></textarea>
+                </div>
+                <button type="submit" class="mb-2 btn btn-primary btn-sm d-flex justify-content-start" th:text="#{label.submit}">제출</button>
+            </form>
 
+            <!-- 댓글 삽입 Div -->
+            <div id="commentResultDiv"></div>
+            <!-- 댓글 출력칸 -->
+            <div th:id="|comment${comment.commentId}|" class="mb-3" th:each="comment : ${comments}">
                 <div class="border"></div>
-                <!--댓글 입력창-->
-                <form id="commentInput">
-                    <div class="mb-3">
-                        <label style="font-size: 0.8rem" for="writer" class="form-label" th:text="#{label.writer}"></label>
-                        <input id="writer" class="form-control" type="text">
-                    </div>
-                    <div class="mb-3">
-                        <label style="font-size: 0.8rem" for="contents" class="form-label" th:text="#{label.contents}"></label>
-                        <textarea id="contents" class="form-control" rows="3"></textarea>
-                    </div>
-                    <button type="submit" class="mb-2 btn btn-primary btn-sm d-flex justify-content-start" th:text="#{label.submit}">제출</button>
-                </form>
-
-                <!--댓글 삽입 Div-->
-                <div id="commentResultDiv"></div>
-                <!--댓글 출력칸-->
-                <div th:id="|comment${comment.commentId}|" class="mb-3" th:each="comment : ${comments}">
-                    <div class="border"></div>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item">
-                                <b style="font-size: 0.8rem" th:text="${comment.writer}"></b>
-                            </li>
-                            <li class="breadcrumb-item">
-                                <a class="link-light">
-                                    <!--||로 감싸야 인식한다-->
-                                    <b th:onclick="|creatReplyInput(${comment.commentId})|" style="font-size: 0.8rem" th:text="#{label.reply}"></b>
-                                </a>
-                            </li>
-                            <li class='breadcrumb-item'>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <b style="font-size: 0.8rem" th:text="${comment.writer}"></b>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a class="link-light">
+                                <b th:onclick="|creatReplyInput(${comment.commentId})|" style="font-size: 0.8rem" th:text="#{label.reply}"></b>
+                            </a>
+                        </li>
+                        <li class='breadcrumb-item'>
                             <a class='link-light'>
                                 <b th:onclick="|removeComment(${comment.commentId})|" style='font-size: 0.8rem'>삭제</b>
-                                </a>
-                            </li>
-                        </ol>
-                    </nav>
-                    <p th:text="${comment.contents}"></p>
-                    <div th:id="|ReplyInputDiv${comment.commentId}|"></div>
-                </div>
+                            </a>
+                        </li>
+                    </ol>
+                </nav>
+                <p th:text="${comment.contents}"></p>
+                <div th:id="|ReplyInputDiv${comment.commentId}|"></div>
             </div>
-        </main>
+        </div>
+    </main>
 
-        <script th:inline="javascript">
-            function creatReplyInput(commentId){
-                const replyInput =
-                    "<form id='postReply"+ commentId +"'>" +
-                        "<input id='commentIdInput' class='visually-hidden' value=" + commentId + ">"+
-                        "<div class='mb-3'>" +
-                            "<label style='font-size: 0.8rem' for='writer' class='form-label'>작성자</label>" +
-                            "<input id='writer' class='form-control' type='text'>" +
-                        "</div>" +
-                        "<div class='mb-3'>" +
-                            "<label style='font-size: 0.8rem' for='contents' class='form-label'>내용</label>" +
-                            "<textarea id='contents' class='form-control' rows='3'></textarea>" +
-                        "</div>" +
-                        "<button type='submit' onclick='replyComment("+ commentId +")' class='btn btn-primary btn-sm d-flex justify-content-start'>제출</button>"+
-                        "<button type='button' onclick='removeReplyInput("+ commentId +")' class='mb-2 btn btn-secondary btn-sm d-flex justify-content-start'>취소</button>" +
-                    "</form>"
-                $("#ReplyInputDiv" + commentId).replaceWith(replyInput)
-            }
-            //<div id='ReplyInputDiv'" + commentId + "></div> X , <div id='ReplyInputDiv" + commentId + "'></div> O
-            function removeReplyInput(commentId){
-                $("#postReply" + commentId).replaceWith("<div id='ReplyInputDiv" + commentId + "'></div>");
-            }
+    <!-- JavaScript -->
+    <script th:inline="javascript">
+        function creatReplyInput(commentId) {
+            const replyInput = `
+                    <form id='postReply${commentId}'>
+                        <input id='commentIdInput' class='visually-hidden' value='${commentId}'>
+                        <div class='mb-3'>
+                            <label style='font-size: 0.8rem' for='writer' class='form-label'>작성자</label>
+                            <input id='writer' class='form-control' type='text'>
+                        </div>
+                        <div class='mb-3'>
+                            <label style='font-size: 0.8rem' for='contents' class='form-label'>내용</label>
+                            <textarea id='contents' class='form-control' rows='3'></textarea>
+                        </div>
+                        <button type='submit' onclick='replyComment(${commentId})' class='btn btn-primary btn-sm d-flex justify-content-start'>제출</button>
+                        <button type='button' onclick='removeReplyInput(${commentId})' class='mb-2 btn btn-secondary btn-sm d-flex justify-content-start'>취소</button>
+                    </form>`;
+            $("#ReplyInputDiv" + commentId).replaceWith(replyInput);
+        }
 
-            // 답글 ajax javascript
-            function replyComment(parentId){
-                $(document).on('submit',"#postReply" + parentId,function (event){
-                    const boardId = [[${boardId}]];
-                    const writer = $("#writer",this).val();
-                    const contents = $("#contents",this).val();
-                    $("#writer",this).val("");
-                    $("#contents",this).val("");
-                    event.preventDefault()
-                    $.ajax({
-                        url:'/comment/reply',
-                        type:'post',
-                        contentType:'application/json',
-                        dataType:'json',
-                        data: JSON.stringify({
-                            commentId:parentId,
-                            boardId:boardId,
-                            writer:writer,
-                            contents:contents
-                        }),
-                        success:function (result){
-                            if(result.status.match("CREATED")){
-                                removeReplyInput(parentId)
-                                const reply =
-                                    "<div id='comment" + result.data.commentId +"' class='ms-4'>" +
-                                        "<div class='border'></div>" +
-                                        "<nav aria-label='breadcrumb'>" +
-                                            "<ol class='breadcrumb'>" +
-                                                "<li class='breadcrumb-item'>" +
-                                                    "<i class='bi bi-arrow-return-right'></i>" +
-                                                   "<b style='font-size: 0.8rem'>" + result.data.writer + "</b>" +
-                                                "</li>" +
-                                                "<li class='breadcrumb-item'>" +
-                                                    "<a class='link-light'>" +
-                                                        "<b onclick='creatReplyInput("+ result.data.commentId +")' style='font-size: 0.8rem'>답글</b>" +
-                                                    "</a>" +
-                                                "</li>" +
-                                                "<li class='breadcrumb-item'>" +
-                                                    "<a class='link-light'>" +
-                                                        "<b onclick='removeComment("+ result.data.commentId +")' style='font-size: 0.8rem'>삭제</b>" +
-                                                    "</a>" +
-                                                "</li>" +
-                                           "</ol>" +
-                                        "</nav>" +
-                                        "<p>"+ result.data.content +"</p>" +
-                                        "<div id='ReplyInputDiv"+ result.data.commentId +"'></div>" +
-                                    "</div>"
+        function removeReplyInput(commentId) {
+            $("#postReply" + commentId).replaceWith("<div id='ReplyInputDiv" + commentId + "'></div>");
+        }
 
-                                $("#ReplyInputDiv" + parentId).after(reply)
-                            } else{
-                                alert("fail" + result.message);
-                            }
-                        },
-                        error:function (){
-                            alert("fail!")
-                        }
-                    })
-                })
-            }
-
-            function removeComment(commentId){
+        // 답글 ajax javascript
+        function replyComment(parentId) {
+            $(document).on('submit', "#postReply" + parentId, function (event) {
+                const boardId = [[${boardId}]];
+                const writer = $("#writer", this).val();
+                const contents = $("#contents", this).val();
+                $("#writer", this).val("");
+                $("#contents", this).val("");
+                event.preventDefault();
                 $.ajax({
-                    url:"/comment",
-                    type:"delete",
-                    contentType:'application/json',
-                    dataType:'json',
-                    data:JSON.stringify(commentId),
-                    success:function (result){
-                        if(result.status.match("ACCEPTED")){
-                            $('#comment' + commentId).remove()
+                    url: '/comment/reply',
+                    type: 'post',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        commentId: parentId,
+                        boardId: boardId,
+                        writer: writer,
+                        contents: contents
+                    }),
+                    success: function (result) {
+                        if (result.status.match("CREATED")) {
+                            removeReplyInput(parentId);
+                            const reply = `
+                                    <div id='comment${result.data.commentId}' class='ms-4'>
+                                        <div class='border'></div>
+                                        <nav aria-label='breadcrumb'>
+                                            <ol class='breadcrumb'>
+                                                <li class='breadcrumb-item'>
+                                                    <i class='bi bi-arrow-return-right'></i>
+                                                    <b style='font-size: 0.8rem'>${result.data.writer}</b>
+                                                </li>
+                                                <li class='breadcrumb-item'>
+                                                    <a class='link-light'>
+                                                        <b onclick='creatReplyInput(${result.data.commentId})' style='font-size: 0.8rem'>답글</b>
+                                                    </a>
+                                                </li>
+                                                <li class='breadcrumb-item'>
+                                                    <a class='link-light'>
+                                                        <b onclick='removeComment(${result.data.commentId})' style='font-size: 0.8rem'>삭제</b>
+                                                    </a>
+                                                </li>
+                                            </ol>
+                                        </nav>
+                                        <p>${result.data.content}</p>
+                                        <div id='ReplyInputDiv${result.data.commentId}'></div>
+                                    </div>`;
+                            $("#ReplyInputDiv" + parentId).after(reply);
                         } else {
-                            alert("fail! = " + result.status)
+                            alert("fail" + result.message);
                         }
                     },
-                    error:function (){
-                        alert("fail!")
+                    error: function () {
+                        alert("fail!");
                     }
-                })
-            }
+                });
+            });
+        }
 
-        </script>
+        function removeComment(commentId) {
+            $.ajax({
+                url: "/comment",
+                type: "delete",
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(commentId),
+                success: function (result) {
+                    if (result.status.match("ACCEPTED")) {
+                        $('#comment' + commentId).remove();
+                    } else {
+                        alert("fail! = " + result.status);
+                    }
+                },
+                error: function () {
+                    alert("fail!");
+                }
+            });
+        }
+    </script>
 
-        <script th:inline="javascript">
-            $(document).ready(function (){
-                $(document).on('submit',"#commentInput",function (event){
-                    const boardId = [[${boardId}]];
-                    const writer = $("#writer",this).val();
-                    const contents = $("#contents",this).val();
-                    $("#writer",this).val("") //작성자 입력칸 초기화
-                    $("#contents",this).val("")// 내용 입력칸 초기화
-                    event.preventDefault()
-                    $.ajax({
-                        url:'/comment',
-                        type:'post',
-                        contentType:'application/json',
-                        dataType:'json',
-                        data: JSON.stringify({
-                            boardId:boardId,
-                            writer:writer,
-                            contents:contents
-                        }),
-                        success:function (result){
-                            if(result.status.match("CREATED")){
-                                const comment =
-                                    "<div id='comment" + result.data.commentId + "'>" +
-                                        "<div class='border'></div>" +
-                                        "<nav aria-label='breadcrumb'>" +
-                                            "<ol class='breadcrumb'>" +
-                                                "<li class='breadcrumb-item'>" +
-                                                    "<b style='font-size: 0.8rem'>" + result.data.writer + "</b>" +
-                                                "</li>" +
-                                                "<li class='breadcrumb-item'>" +
-                                                    "<a class='link-light'>" +
-                                                        "<b onclick='creatReplyInput("+ result.data.commentId +")' style='font-size: 0.8rem'>답글</b>" +
-                                                    "</a>" +
-                                                "</li>" +
-                                                "<li class='breadcrumb-item'>" +
-                                                    "<a class='link-light'>" +
-                                                        "<b onclick='removeComment("+ result.data.commentId +")' style='font-size: 0.8rem'>삭제</b>" +
-                                                    "</a>" +
-                                                "</li>" +
-                                            "</ol>" +
-                                        "</nav>" +
-                                        "<p>"+ result.data.content +"</p>" +
-                                        "<div id='ReplyInputDiv"+ result.data.commentId +"'></div>" +
-                                    "</div>"
-
-                                    $("#commentResultDiv").after(comment)
-                            } else{
-                                alert("fail code = " + result.code + "reason=" + result.message);
-                            }
-                        },
-                        error:function (){
-                            alert("fail!")
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            $(document).on('submit', "#commentInput", function (event) {
+                const boardId = [[${boardId}]];
+                const writer = $("#writer", this).val();
+                const contents = $("#contents", this).val();
+                $("#writer", this).val(""); // 작성자 입력칸 초기화
+                $("#contents", this).val(""); // 내용 입력칸 초기화
+                event.preventDefault();
+                $.ajax({
+                    url: '/comment',
+                    type: 'post',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        boardId: boardId,
+                        writer: writer,
+                        contents: contents
+                    }),
+                    success: function (result) {
+                        if (result.status.match("CREATED")) {
+                            const comment = `
+                                    <div id='comment${result.data.commentId}'>
+                                        <div class='border'></div>
+                                        <nav aria-label='breadcrumb'>
+                                            <ol class='breadcrumb'>
+                                                <li class='breadcrumb-item'>
+                                                    <b style='font-size: 0.8rem'>${result.data.writer}</b>
+                                                </li>
+                                                <li class='breadcrumb-item'>
+                                                    <a class='link-light'>
+                                                        <b onclick='creatReplyInput(${result.data.commentId})' style='font-size: 0.8rem'>답글</b>
+                                                    </a>
+                                                </li>
+                                                <li class='breadcrumb-item'>
+                                                    <a class='link-light'>
+                                                        <b onclick='removeComment(${result.data.commentId})' style='font-size: 0.8rem'>삭제</b>
+                                                    </a>
+                                                </li>
+                                            </ol>
+                                        </nav>
+                                        <p>${result.data.content}</p>
+                                        <div id='ReplyInputDiv${result.data.commentId}'></div>
+                                    </div>`
+                            $("#commentResultDiv").append(comment);
+                        } else {
+                            alert("fail! " + result.message);
                         }
-                    })
-                })
+                    },
+                    error: function () {
+                        alert("fail!");
+                    }
+                });
+            });
+        });
 
-                // 좋아요 ajax javascript
-                $(document).on('click',"#heartClick",function (event){
-                    const boardId = [[${boardId}]]
-                    event.preventDefault()
-                    $.ajax({
-                        url:'/heart',
-                        type:'post',
-                        contentType:'application/json',
-                        dataType:'json',
-                        data:JSON.stringify({
-                            boardId:boardId
-                        }),
-                        success:function (result){
-                            if(result.status.match("CREATED")){
-                                $("#heartClick")
-                                    .removeAttr("id")
-                                    .removeClass("bi bi-hand-thumbs-up")
-                                    .addClass("bi bi-hand-thumbs-up-fill")
+        // 좋아요 ajax javascript
+        $(document).on('click',"#heartClick",function (event){
+            const boardId = [[${boardId}]];
+            event.preventDefault();
+            $.ajax({
+                url:'/heart',
+                type:'post',
+                contentType:'application/json',
+                dataType:'json',
+                data:JSON.stringify({
+                    boardId:boardId
+                }),
+                success:function (result){
+                    if(result.status.match("CREATED")){
+                        $("#heartClick")
+                            .removeAttr("id")
+                            .removeClass("bi bi-hand-thumbs-up")
+                            .addClass("bi bi-hand-thumbs-up-fill");
 
-                                $("#heartNum").text(result.data.heartNum)
-                            }
-                        },
-                        error:function (error){
-                            alert("error!")
-                        }
-                    })
-                })
-            })
-        </script>
-
-    </div>
+                        $("#heartNum").text(result.data.heartNum);
+                    }
+                },
+                error:function (error){
+                    alert("error!");
+                }
+            });
+        });
+    </script>
+</div>
 </body>
 </html>
