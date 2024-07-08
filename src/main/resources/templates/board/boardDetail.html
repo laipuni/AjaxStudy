@@ -238,6 +238,44 @@
                 }
             });
         });
+        //페이지 로딩 후 댓글을 불러옴
+        $(window).on('load',function (){
+            const boardId = [[${boardId}]];
+            $.get("/comment",{boardId: boardId, page : 0})
+                .done(function (result){
+                    $("#commentSpinner").remove()
+                    $.each(result.data.comments, function (index,comment){
+                        const commentDiv = `
+                        <div id="comment${comment.commentId}">
+                            <div class='border'></div>
+                            <nav aria-label='breadcrumb'>
+                                <ol class='breadcrumb'>
+                                    <li class='breadcrumb-item'>
+                                        <b style='font-size: 0.8rem'>${comment.writer}</b>
+                                    </li>
+                                    <li class='breadcrumb-item'>
+                                        <a class='link-light'>
+                                            <b onclick='creatReplyInput(${comment.commentId})' style='font-size: 0.8rem'>답장</b>
+                                        </a>
+                                    </li>
+                                    <li class='breadcrumb-item'>
+                                        <a class='link-light'>
+                                            <b onclick="removeComment(${comment.commentId})" style='font-size: 0.8rem'>삭제</b>
+                                        </a>
+                                    </li>
+                                </ol>
+                            </nav>
+                            <p>${comment.contents}</p>
+                            <div id="ReplyInputDiv${comment.commentId}"></div>
+                        </div>`
+                        $("#commentResultDiv").append(commentDiv)
+                    })
+                })
+                .fail(function (){
+                    alert("fail!")
+                })
+        })
+
     </script>
 </div>
 </body>
