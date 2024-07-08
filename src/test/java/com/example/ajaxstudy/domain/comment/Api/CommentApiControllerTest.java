@@ -46,7 +46,7 @@ class CommentApiControllerTest {
 
         String data = objectMapper.writeValueAsString(request);
 
-        Mockito.when(commentService.findAllByBoardIdAndNullDesc(Mockito.any(CommentBoardRequest.class)))
+        Mockito.when(commentService.findAllByBoardIdAndNullDesc(Mockito.any(Long.class),Mockito.any(int.class)))
                 .thenReturn(Mockito.any(CommentBoardListResponse.class));
         //when
         //then
