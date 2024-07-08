@@ -37,7 +37,13 @@ public class CommentQuerydslRepository {
                 .orderBy(comment.id.desc())
                 .fetch();
 
-        return new SliceImpl<>(content,pageable,hasNext(content.size(), pageable));
+        boolean hasNext = hasNext(content.size(), pageable);
+        if(hasNext){
+            //마지막 데이터는 다음 데이터가 존재하는 여부를 위함이기 때문에 제거
+            content.remove(content.size() - 1);
+        }
+
+        return new SliceImpl<>(content,pageable,hasNext);
     }
 
     public Slice<CommentBoardResponse> findAllByBoardIdAndNullDesc(Long boardId, Pageable pageable){
@@ -60,10 +66,17 @@ public class CommentQuerydslRepository {
                 .orderBy(comment.id.desc())
                 .fetch();
 
-        return new SliceImpl<>(content,pageable,hasNext(content.size(), pageable));
+        boolean hasNext = hasNext(content.size(), pageable);
+        if(hasNext){
+            //마지막 데이터는 다음 데이터가 존재하는 여부를 위함이기 때문에 제거
+            content.remove(content.size() - 1);
+        }
+
+        return new SliceImpl<>(content,pageable,hasNext);
     }
 
     private boolean hasNext(final int contentSize,Pageable pageable) {
+        //10개가 아닌 11개르 조회했을 때 11개면 다음 데이터가 있다고 판단
         return contentSize > pageable.getPageSize();
     }
 }
