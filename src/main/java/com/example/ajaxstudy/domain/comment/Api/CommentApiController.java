@@ -3,7 +3,6 @@ package com.example.ajaxstudy.domain.comment.Api;
 import com.example.ajaxstudy.domain.ApiResponse;
 import com.example.ajaxstudy.domain.comment.CommentService;
 import com.example.ajaxstudy.domain.comment.request.CommentAddRequest;
-import com.example.ajaxstudy.domain.comment.request.CommentChildRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentReplyRequest;
 import com.example.ajaxstudy.domain.comment.response.CommentAddResponse;
 import com.example.ajaxstudy.domain.comment.response.CommentBoardListResponse;
@@ -45,8 +44,8 @@ public class CommentApiController {
 
     @GetMapping("/comment/reply")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<CommentChildListResponse> getChild(@Valid @RequestBody CommentChildRequest request){
-        CommentChildListResponse children = commentService.findAllByParentId(request);
+    public ApiResponse<CommentChildListResponse> getChild(@RequestParam Long commentId, @RequestParam int page){
+        CommentChildListResponse children = commentService.findAllByParentId(commentId,page);
         return ApiResponse.of(HttpStatus.OK,children);
     }
 
