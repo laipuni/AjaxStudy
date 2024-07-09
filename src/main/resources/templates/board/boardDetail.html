@@ -147,7 +147,7 @@
                             .attr("type","button").attr("data-bs-toggle","collapse")
                             .attr("data-bs-target","#ReplyResultDiv" + commentId)
 
-                        $("#ReplyResultDiv" + commentId).addClass("collapse")
+                        $("#ReplyResultDiv" + commentId).addClass("collapse").addClass("show")
                     }
 
                     $.each(result.data.childList,function (index,child){
@@ -234,7 +234,7 @@
                                         <p>${content}</p>
                                         <div id='ReplyInputDiv${commentId}'></div>
                                         ${childNum > 0 ? `
-                                        <button id='replyGetBtn' class="btn" onclick='getReply(${commentId})'>
+                                        <button id='replyGetBtn${commentId}' class="btn" onclick='getReply(${commentId},0)'>
                                             <i class='bi bi-arrow-return-right text-primary'></i>
                                             <span class="text-primary">답글 ${childNum}개 더보기</span>
                                         </button>
