@@ -31,12 +31,6 @@ public class InitComponent {
                 .build();
         boardRepository.save(board);
 
-        Comment parent = Comment.builder()
-                .board(board)
-                .writer("라이푸니")
-                .contents("부모 댓글")
-                .build();
-        commentRepository.saveAll(List.of(parent));
         for (int i = 0; i < 20; i++) {
             Comment comment = Comment.builder()
                     .board(board)
@@ -46,13 +40,22 @@ public class InitComponent {
             commentRepository.saveAll(List.of(comment));
         }
 
-        Comment child = Comment.builder()
+        Comment parent = Comment.builder()
                 .board(board)
                 .writer("라이푸니")
-                .contents("자식 댓글")
+                .contents("부모 댓글")
                 .build();
-        child.changeParentComment(parent);
-        commentRepository.save(child);
+        commentRepository.save(parent);
+
+        for (int i = 0; i < 20; i++) {
+            Comment child = Comment.builder()
+                    .board(board)
+                    .writer("자식 라이푸니" + i)
+                    .contents("자식"+ i +" 댓글")
+                    .build();
+            child.changeParentComment(parent);
+            commentRepository.save(child);
+        }
     }
 
 }
