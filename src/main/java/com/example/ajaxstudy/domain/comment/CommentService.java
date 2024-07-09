@@ -4,7 +4,6 @@ import com.example.ajaxstudy.domain.PageAbleFactory;
 import com.example.ajaxstudy.domain.board.Board;
 import com.example.ajaxstudy.domain.board.BoardRepository;
 import com.example.ajaxstudy.domain.comment.request.CommentAddRequest;
-import com.example.ajaxstudy.domain.comment.request.CommentChildRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentReplyRequest;
 import com.example.ajaxstudy.domain.comment.response.CommentAddResponse;
 import com.example.ajaxstudy.domain.comment.response.CommentBoardListResponse;
@@ -46,10 +45,10 @@ public class CommentService {
         return CommentReplyResponse.of(comment);
     }
 
-    public CommentChildListResponse findAllByParentId(CommentChildRequest request){
+    public CommentChildListResponse findAllByParentId(Long commentId, int page){
         return CommentChildListResponse.of(commentQuerydslRepository.findAllByParentIdDesc(
-                request.getCommentId(),
-                PageAbleFactory.create(request.getPage(), 10)
+                commentId,
+                PageAbleFactory.create(page, 10)
         ));
     }
 
