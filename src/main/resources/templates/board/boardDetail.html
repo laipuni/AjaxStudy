@@ -60,29 +60,28 @@
                         <input id='commentIdInput' class='visually-hidden' value='${commentId}'>
                         <div class='mb-3'>
                             <label style='font-size: 0.8rem' for='writer' class='form-label'>작성자</label>
-                            <input id='writer' class='form-control' type='text'>
+                            <input id='writer${commentId}' class='form-control' type='text'>
                         </div>
                         <div class='mb-3'>
                             <label style='font-size: 0.8rem' for='contents' class='form-label'>내용</label>
-                            <textarea id='contents' class='form-control' rows='3'></textarea>
+                            <textarea id='contents${commentId}' class='form-control' rows='3'></textarea>
                         </div>
-                        <button type='submit' onclick='replyComment(${commentId})' class='btn btn-primary btn-sm d-flex justify-content-start'>제출</button>
+                        <button type='submit' onclick='replyComment(event,${commentId})' class='btn btn-primary btn-sm d-flex justify-content-start'>제출</button>
                         <button type='button' onclick='removeReplyInput(${commentId})' class='mb-2 btn btn-secondary btn-sm d-flex justify-content-start'>취소</button>
                     </form>`;
-            $("#ReplyInputDiv" + commentId).replaceWith(replyInput);
+            $("#ReplyInputDiv" + commentId).append(replyInput);
         }
         function removeReplyInput(commentId) {
-            $("#postReply" + commentId).replaceWith("<div id='ReplyInputDiv" + commentId + "'></div>");
+            $("#ReplyInputDiv" + commentId).empty();
         }
 
         // 답글 ajax javascript
-        function replyComment(parentId) {
-            $(document).on('submit', "#postReply" + parentId, function (event) {
+        function replyComment(event,parentId) {
                 const boardId = [[${boardId}]];
-                const writer = $("#writer", this).val();
-                const contents = $("#contents", this).val();
-                $("#writer", this).val("");
-                $("#contents", this).val("");
+                const writer = $("#writer"+ parentId).val();
+                const contents = $("#contents"+ parentId).val();
+                $("#writer"+ parentId).val("");
+                $("#contents"+ parentId).val("");
                 event.preventDefault();
                 $.ajax({
                     url: '/comment/reply',
@@ -105,11 +104,10 @@
                             alert("fail" + result.message);
                         }
                     },
-                    error: function () {
-                        alert("fail!");
+                    error: function (err) {
+                        alert("fail!" + JSON.stringify(err));
                     }
                 });
-            });
         }
 
         function removeComment(commentId) {
