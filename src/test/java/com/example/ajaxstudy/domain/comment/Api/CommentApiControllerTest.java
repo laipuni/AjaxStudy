@@ -1,10 +1,7 @@
 package com.example.ajaxstudy.domain.comment.Api;
 
 import com.example.ajaxstudy.domain.comment.CommentService;
-import com.example.ajaxstudy.domain.comment.request.CommentAddRequest;
-import com.example.ajaxstudy.domain.comment.request.CommentBoardRequest;
-import com.example.ajaxstudy.domain.comment.request.CommentChildRequest;
-import com.example.ajaxstudy.domain.comment.request.CommentReplyRequest;
+import com.example.ajaxstudy.domain.comment.request.*;
 import com.example.ajaxstudy.domain.comment.response.CommentAddResponse;
 import com.example.ajaxstudy.domain.comment.response.CommentBoardListResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -396,5 +393,107 @@ class CommentApiControllerTest {
                 .andExpect(jsonPath("$.code").value(202))
                 .andExpect(jsonPath("$.data").isEmpty());
 
+    }
+
+    @DisplayName("댓글 수정 api 테스트")
+    @Test
+    void modifyComment() throws Exception {
+        //given
+        CommentModifyRequest request = CommentModifyRequest.builder()
+                .writer("라이푸니")
+                .contents("안녕하세요")
+                .commentId(0L)
+                .build();
+        String data = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/comment")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(data)
+        )
+                .andDo(print())
+                .andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.status").value("ACCEPTED"))
+                .andExpect(jsonPath("$.code").value(202));
+
+    }
+
+    @DisplayName("댓글 수정 api 테스트, 댓글 id가 null로 넘어올 경우 에러가 발생한다.")
+    @Test
+    void modifyCommentWithNullCommentId() throws Exception {
+        //given
+        CommentModifyRequest request = CommentModifyRequest.builder()
+                .writer("라이푸니")
+                .contents("안녕하세요")
+                .build();
+        String data = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.put("/comment")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(data)
+                )
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("해당 항목은 필수입니다."))
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @DisplayName("댓글 수정 api 테스트, 댓글 작성자가 빈칸으로 넘어올 경우 에러가 발생한다.")
+    @Test
+    void modifyCommentWithBlankWriter() throws Exception {
+        //given
+        CommentModifyRequest request = CommentModifyRequest.builder()
+                .writer(" ")
+                .contents("안녕하세요")
+                .commentId(0L)
+                .build();
+        String data = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.put("/comment")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(data)
+                )
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("해당 항목은 필수입니다."))
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @DisplayName("댓글 수정 api 테스트, 댓글 내용아 빈칸으로 넘어올 경우 에러가 발생한다.")
+    @Test
+    void modifyCommentWithBlankContents() throws Exception {
+        //given
+        CommentModifyRequest request = CommentModifyRequest.builder()
+                .writer("라이푸니")
+                .contents(" ")
+                .commentId(0L)
+                .build();
+        String data = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.put("/comment")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(data)
+                )
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("해당 항목은 필수입니다."))
+                .andExpect(jsonPath("$.data").isEmpty());
     }
 }
