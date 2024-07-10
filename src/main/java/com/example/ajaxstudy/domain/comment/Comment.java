@@ -1,9 +1,7 @@
 package com.example.ajaxstudy.domain.comment;
 
 import com.example.ajaxstudy.domain.board.Board;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -62,6 +60,11 @@ public class Comment {
         parent.addChildComment(comment);
         board.addComment(comment);
         return comment;
+    }
+
+    public void modify(String writer, String contents){
+        this.writer = writer;
+        this.contents = contents;
     }
 
     public void changeParentComment(Comment parent){
