@@ -3,15 +3,14 @@ package com.example.ajaxstudy.domain.comment;
 import com.example.ajaxstudy.domain.board.Board;
 import com.example.ajaxstudy.domain.board.BoardRepository;
 import com.example.ajaxstudy.domain.comment.request.CommentAddRequest;
+import com.example.ajaxstudy.domain.comment.request.CommentModifyRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentReplyRequest;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -92,8 +91,8 @@ class CommentServiceTest {
                 .board(board)
                 .contents(parentContent)
                 .build();
-        commentRepository.save(comment);
         boardRepository.save(board);
+        commentRepository.save(comment);
 
         String child = "자식";
         String childContent = "안녕하세여!";
@@ -220,5 +219,54 @@ class CommentServiceTest {
 
         //then
         assertThat(comments).isEmpty();
+    }
+
+    @DisplayName("댓글 수정 요청을 받아 해당 댓글을 수정 한다.")
+    @Test
+    void modifyComment(){
+        //given
+        Comment comment = Comment.builder()
+                .writer("익명")
+                .contents("Hello world!")
+                .build();
+
+        commentRepository.save(comment);
+
+        String changeWriter = "라이푸니";
+        String changeContents = "안녕하세요";
+        CommentModifyRequest request = CommentModifyRequest.builder()
+                .writer(changeWriter)
+                .commentId(comment.getId())
+                .contents(changeContents)
+                .build();
+        //when
+        commentService.modifyComment(request);
+        List<Comment> comments = commentRepository.findAll();
+
+        //then
+        assertThat(comments).hasSize(1)
+                .extracting("writer","contents")
+                .containsExactlyInAnyOrder(
+                        tuple(changeWriter,changeContents)
+                );
+    }
+
+    @DisplayName("존재하지 않는 댓글의 수정 요청을 받을 경우 에러가 발생한다.")
+    @Test
+    void modifyCommentWithNotExistComment(){
+        //given
+        String changeWriter = "라이푸니";
+        String changeContents = "안녕하세요";
+        CommentModifyRequest request = CommentModifyRequest.builder()
+                .writer(changeWriter)
+                .commentId(0L)
+                .contents(changeContents)
+                .build();
+        //when
+
+        //then
+        assertThatThrownBy(()-> commentService.modifyComment(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageMatching("해당 댓글을 존재하지 않습니다.");
     }
 }
