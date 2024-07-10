@@ -3,11 +3,9 @@ package com.example.ajaxstudy.domain.comment.Api;
 import com.example.ajaxstudy.domain.ApiResponse;
 import com.example.ajaxstudy.domain.comment.CommentService;
 import com.example.ajaxstudy.domain.comment.request.CommentAddRequest;
+import com.example.ajaxstudy.domain.comment.request.CommentModifyRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentReplyRequest;
-import com.example.ajaxstudy.domain.comment.response.CommentAddResponse;
-import com.example.ajaxstudy.domain.comment.response.CommentBoardListResponse;
-import com.example.ajaxstudy.domain.comment.response.CommentChildListResponse;
-import com.example.ajaxstudy.domain.comment.response.CommentReplyResponse;
+import com.example.ajaxstudy.domain.comment.response.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +38,12 @@ public class CommentApiController {
     public ApiResponse<CommentReplyResponse> addReply(@Valid @RequestBody CommentReplyRequest request){
         CommentReplyResponse response = commentService.reply(request);
         return ApiResponse.of(HttpStatus.CREATED,response);
+    }
+
+    @PutMapping("/comment")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ApiResponse<CommentModifyResponse> modifyComment(@Valid @RequestBody CommentModifyRequest request){
+        return ApiResponse.of(HttpStatus.ACCEPTED,commentService.modifyComment(request));
     }
 
     @GetMapping("/comment/reply")
