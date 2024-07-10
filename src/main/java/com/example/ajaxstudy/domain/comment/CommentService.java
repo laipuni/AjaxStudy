@@ -4,11 +4,9 @@ import com.example.ajaxstudy.domain.PageAbleFactory;
 import com.example.ajaxstudy.domain.board.Board;
 import com.example.ajaxstudy.domain.board.BoardRepository;
 import com.example.ajaxstudy.domain.comment.request.CommentAddRequest;
+import com.example.ajaxstudy.domain.comment.request.CommentModifyRequest;
 import com.example.ajaxstudy.domain.comment.request.CommentReplyRequest;
-import com.example.ajaxstudy.domain.comment.response.CommentAddResponse;
-import com.example.ajaxstudy.domain.comment.response.CommentBoardListResponse;
-import com.example.ajaxstudy.domain.comment.response.CommentChildListResponse;
-import com.example.ajaxstudy.domain.comment.response.CommentReplyResponse;
+import com.example.ajaxstudy.domain.comment.response.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +60,14 @@ public class CommentService {
     @Transactional
     public void deleteByCommentId(Long commentId){
         commentRepository.deleteById(commentId);
+    }
+
+    @Transactional
+    public CommentModifyResponse modifyComment(CommentModifyRequest request){
+        Comment comment = commentRepository.findById(request.getCommentId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 댓글을 존재하지 않습니다."));
+        comment.modify(request.getWriter(), request.getContents());
+        return CommentModifyResponse.of(comment);
     }
 
 }
