@@ -18,13 +18,16 @@ querydsl : 5.0.0
 <!--좋아요 gif-->
 <img src="https://github.com/laipuni/jQuery-Ajax-Study/assets/144443568/73af0843-4f01-4bb3-aaeb-1c63a7047854" style="width:900px">
 </img>
+
 <!--좋아요 query => ajax 방식 vs form 방식-->
+ajax : 1(좋아요 insert) + 1(board 좋아요 개수 update) = 2번 쿼리
+
+form : 1(좋아요 insert) + 1(board 좋아요 개수 update) + 2번(새로고침 댓글,게시판 조회) = 4번 쿼리
 
 ## 댓글 무한 스크롤 📜
 <!--댓글 무한 스크롤 gif-->
 <img src="https://github.com/laipuni/jQuery-Ajax-Study/assets/144443568/54043d31-c550-45a8-8d36-aefa07e68259" style="width:900px">
 </img>
-
 
 ## 게시글 댓글 작성 📝
 <!--댓글 작성 gif-->
@@ -32,6 +35,9 @@ querydsl : 5.0.0
 </img>
 
 <!--댓글 작성 query => ajax 방식 vs form 방식-->
+ajax : 1(참조를 위해 게시판 조회) + 1(댓글 insert) = 2번 쿼리
+
+form : 1(참조를 위해 게시판 조회) + 1(댓글 insert) + 2번(새로고침 댓글,게시판 조회) = 4번 쿼리
 
 ## 댓글 답장 📝
 <!--댓글 답장 gif-->
@@ -39,14 +45,15 @@ querydsl : 5.0.0
 </img>
 
 <!--댓글 답장 query => ajax 방식 vs form 방식-->
+ajax : 1(참조를 위해 댓글 조회) + 1(참조를 위해 게시판 조회) + 1(답글 insert) = 3번 쿼리
 
+form : 1(참조를 위해 댓글 조회) + 1(참조를 위해 게시판 조회) + 1(답글 insert) + 2번(새로고침 댓글,게시판 조회) = 5번 쿼리
 
 ## 답글 불러오기 ☎️ 
 <!--답글 불러오기 gif-->
 <img src="https://github.com/laipuni/jQuery-Ajax-Study/assets/144443568/5fe72e25-156e-40ce-a9f5-3bc1a75b3ccc" style="width:900px">
 </img>
 
-<!--답글 불러오기 query => ajax 방식 vs form 방식-->
 
 ## 댓글 수정 ✏️ 
 <!--댓글 수정 gif-->
@@ -54,6 +61,9 @@ querydsl : 5.0.0
 </img>
 
 <!--댓글 수정 query => ajax 방식 vs form 방식-->
+ajax : 1(수정할 댓글 조회) + 1(댓글 수정 update) = 2번 쿼리
+
+form : 1(수정할 댓글 조회) + 1(댓글 수정 update) + 1(답글 insert) + 2번(새로고침 댓글,게시판 조회) = 4번 쿼리
 
 
 ## 댓글 삭제 ❌
@@ -62,4 +72,3 @@ querydsl : 5.0.0
 </img>
 
 <!--댓글 삭제 query => ajax 방식 vs form 방식-->
-
