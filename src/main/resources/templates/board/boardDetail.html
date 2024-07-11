@@ -7,6 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../js/commentModifyModal.js?ver=1"></script>
 </head>
 <body>
 <div class="container w-50">
@@ -122,8 +123,8 @@
                         boardId: boardId,
                         writer: writer,
                         contents: contents
-                    }),
-                    success: function (result) {
+                    })
+                }).done(function (result){
                         if (result.status.match("CREATED")) {
                             removeReplyInput(parentId);
                             $("#ReplyResultDiv" + parentId).prepend(
@@ -132,11 +133,10 @@
                         } else {
                             alert("fail" + result.message);
                         }
-                    },
-                    error: function (err) {
+                    })
+                    .error(function (){
                         alert("fail!" + JSON.stringify(err));
-                    }
-                });
+                    });
         }
 
         function removeComment(commentId) {
@@ -145,18 +145,17 @@
                 type: "delete",
                 contentType: 'application/json',
                 dataType: 'json',
-                data: JSON.stringify(commentId),
-                success: function (result) {
-                    if (result.status.match("ACCEPTED")) {
-                        alert("댓글을 성공적으로 삭제했습니다.")
-                        $('#comment' + commentId).remove();
-                    } else {
-                        alert("fail! = " + result.status);
-                    }
-                },
-                error: function () {
-                    alert("fail!");
+                data: JSON.stringify(commentId)
+            }).done(function (result){
+                if (result.status.match("ACCEPTED")) {
+                    alert("댓글을 성공적으로 삭제했습니다.")
+                    $('#comment' + commentId).remove();
+                } else {
+                    alert("fail! = " + result.status);
                 }
+            }).error(function (){
+                alert("fail!");
+
             });
         }
     </script>
@@ -298,8 +297,8 @@
                         boardId: boardId,
                         writer: writer,
                         contents: contents
-                    }),
-                    success: function (result) {
+                    })
+                }).done(function (result){
                         if (result.status.match("CREATED")) {
                             $("#commentResultDiv").prepend(
                                 createComment(result.data.commentId,result.data.writer,result.data.content)
@@ -307,11 +306,10 @@
                         } else {
                             alert("fail! " + result.message);
                         }
-                    },
-                    error: function () {
+                    })
+                    .error(function (){
                         alert("fail!");
-                    }
-                });
+                    });
             });
         });
         // 좋아요 ajax javascript
@@ -324,20 +322,18 @@
                 dataType:'json',
                 data:JSON.stringify({
                     boardId:boardId
-                }),
-                success:function (result){
-                    if(result.status.match("CREATED")){
-                        $("#heartClick")
-                            .removeAttr("id")
-                            .removeClass("bi bi-hand-thumbs-up")
-                            .addClass("bi bi-hand-thumbs-up-fill");
+                })
+            }).done(function (result){
+                if(result.status.match("CREATED")){
+                    $("#heartClick")
+                        .removeAttr("id")
+                        .removeClass("bi bi-hand-thumbs-up")
+                        .addClass("bi bi-hand-thumbs-up-fill");
 
-                        $("#heartNum").text(result.data.heartNum);
-                    }
-                },
-                error:function (error){
-                    alert("error!");
+                    $("#heartNum").text(result.data.heartNum);
                 }
+            }).error(function (){
+                alert("error!");
             });
         });
         //페이지 로딩 후 댓글을 불러옴
@@ -380,7 +376,7 @@
                                 createComment(comment.commentId,comment.writer,comment.contents,comment.childNum)
                             )
                         })
-                        page = result.data.page + 1
+                        page = result.data.page + 1 //다음 스크롤을 준비
                         hasNext = result.data.hasNext
                     })
             }
@@ -424,7 +420,6 @@
                 })
 
         })
-
     </script>
 </div>
 </body>
