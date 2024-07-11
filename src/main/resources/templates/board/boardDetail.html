@@ -395,6 +395,34 @@
             $("#modify-writer").val(writer) // 수정할 작성자 이름을 작성자 수정 칸에 넣기
             $("#modify-contents").val(contents)// 수정할 댓글 내용을 댓글 내용 수정 칸에 넣기
         })
+        //modal 창 submit event 리스너
+        $(document).on('submit','#modifyModalForm',function (event){
+            event.preventDefault();
+            const commentId = $("#modifyCommentId").val()
+            const writer = $("#modify-writer").val()
+            const contents = $("#modify-contents").val()
+            $.ajax({
+                url:'/comment',
+                type:'put',
+                contentType:'application/json',
+                dataType:'json',
+                data:JSON.stringify({
+                    commentId: commentId,
+                    writer: writer,
+                    contents: contents
+                })
+            })
+                .done(function (result){
+                    $('#modifyModal').modal('hide')// 부트스트랩 닫기 메도소드
+                    alert("수정이 성공적으로 완료됐습니다.")
+                    $("#commentWriter" + commentId).text(writer) // 수정할 작성자 이름 불러오기
+                    $("#commentContents" + commentId).text(contents) /// 수정할 댓글 내용 불러오기
+                })
+                .fail(function (error){
+                    alert("Modify Fali! + " + JSON.stringify(error))
+                })
+
+        })
 
     </script>
 </div>
