@@ -95,8 +95,8 @@
                             <label style='font-size: 0.8rem' for='contents' class='form-label'>내용</label>
                             <textarea id='contents${commentId}' class='form-control' rows='3'></textarea>
                         </div>
-                        <button type='submit' onclick='replyComment(event,${commentId})' class='btn btn-primary btn-sm d-flex justify-content-start'>제출</button>
-                        <button type='button' onclick='removeReplyInput(${commentId})' class='mb-2 btn btn-secondary btn-sm d-flex justify-content-start'>취소</button>
+                        <button type='submit' onclick='replyComment(event,${commentId})' class='btn btn-primary btn-sm float-left'>제출</button>
+                        <button type='button' onclick='removeReplyInput(${commentId})' class='btn btn-secondary btn-sm float-right'>취소</button>
                     </form>`;
             $("#ReplyInputDiv" + commentId).replaceWith(replyInput);
         }
@@ -148,6 +148,7 @@
                 data: JSON.stringify(commentId),
                 success: function (result) {
                     if (result.status.match("ACCEPTED")) {
+                        alert("댓글을 성공적으로 삭제했습니다.")
                         $('#comment' + commentId).remove();
                     } else {
                         alert("fail! = " + result.status);
