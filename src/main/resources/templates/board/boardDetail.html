@@ -181,7 +181,7 @@
                             createReply(child.commentId,child.writer,child.contents,child.childNum)
                         )
                     })
-
+                    $("#moreReplyBtn" + commentId).remove()
                     if(result.data.hasNext){
                         const moreReplyBtn = `
                         <button id='moreReplyBtn${commentId}' class="btn" onClick='getReply(${commentId},${result.data.page + 1})'>
@@ -190,8 +190,6 @@
                         </button>
                         `
                         $("#ReplyResultDiv" + commentId).append(moreReplyBtn)
-                    } else{
-                       $("#moreReplyBtn" + commentId).remove()
                     }
                 })
                 .fail(function (error){
