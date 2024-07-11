@@ -50,6 +50,35 @@
             </div>
             <!-- 댓글 출력칸 -->
         </div>
+        <!--modal 창-->
+        <div class="modal fade" id="modifyModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel" th:text="#{label.modify.comment}">댓글 수정</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="modifyModalForm">
+                        <div class="modal-body">
+                                <input type="hidden" id="modifyCommentId">
+                                <div class="mb-3">
+                                    <label for="modify-writer"  class="col-form-label" th:text="#{label.writer}">작성자</label>
+                                    <input type="text" class="form-control" id="modify-writer">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="modify-contents" class="col-form-label" th:text="#{label.contents}">내용</label>
+                                    <textarea class="form-control" id="modify-contents"></textarea>
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{label.cancel}">취소</button>
+                            <button type="submit" class="btn btn-primary" th:text="#{label.submit}">제출</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- JavaScript -->
@@ -178,7 +207,7 @@
                     <nav aria-label='breadcrumb'>
                         <ol class='breadcrumb'>
                             <li class='breadcrumb-item'>
-                                <b style='font-size: 0.8rem'>${writer}</b>
+                                <b id='commentWriter${commentId}' style='font-size: 0.8rem'>${writer}</b>
                             </li>
                             <li class='breadcrumb-item'>
                                 <a class='link-light'>
@@ -190,9 +219,14 @@
                                     <b onclick="removeComment(${commentId})" style='font-size: 0.8rem'>삭제</b>
                                 </a>
                             </li>
+                            <li class='breadcrumb-item'>
+                                <a class='link-light' data-bs-toggle='modal' href='#modifyModal' role='button' data-bs-whatever="${commentId}">
+                                    <b style='font-size: 0.8rem'>수정</b>
+                                </a>
+                            </li>
                         </ol>
                     </nav>
-                    <p>${content}</p>
+                    <p id='commentContents${commentId}'>${content}</p>
                     <div id="ReplyInputDiv${commentId}"></div>
                     ${childNum > 0 ? `
                         <button id='replyGetBtn${commentId}' class="btn" onclick='getReply(${commentId},0)'>
@@ -215,7 +249,7 @@
                                             <ol class='breadcrumb'>
                                                 <li class='breadcrumb-item'>
                                                     <i class='bi bi-arrow-return-right'></i>
-                                                    <b style='font-size: 0.8rem'>${writer}</b>
+                                                    <b id='commentWriter${commentId}' style='font-size: 0.8rem'>${writer}</b>
                                                 </li>
                                                 <li class='breadcrumb-item'>
                                                     <a class='link-light'>
@@ -227,9 +261,14 @@
                                                         <b onclick='removeComment(${commentId})' style='font-size: 0.8rem'>삭제</b>
                                                     </a>
                                                 </li>
+                                                <li class='breadcrumb-item' >
+                                                    <a class='link-light' data-bs-toggle='modal' href='#modifyModal' role='button' data-bs-whatever="${commentId}">
+                                                        <b onclick='createModal(${commentId})' style='font-size: 0.8rem'>수정</b>
+                                                    </a>
+                                                </li>
                                             </ol>
                                         </nav>
-                                        <p>${content}</p>
+                                        <p id='commentContents${commentId}'>${content}</p>
                                         <div id='ReplyInputDiv${commentId}'></div>
                                         ${childNum > 0 ? `
                                         <button id='replyGetBtn${commentId}' class="btn" onclick='getReply(${commentId},0)'>
