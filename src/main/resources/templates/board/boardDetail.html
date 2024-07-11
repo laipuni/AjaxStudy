@@ -98,10 +98,10 @@
                         <button type='submit' onclick='replyComment(event,${commentId})' class='btn btn-primary btn-sm d-flex justify-content-start'>제출</button>
                         <button type='button' onclick='removeReplyInput(${commentId})' class='mb-2 btn btn-secondary btn-sm d-flex justify-content-start'>취소</button>
                     </form>`;
-            $("#ReplyInputDiv" + commentId).append(replyInput);
+            $("#ReplyInputDiv" + commentId).replaceWith(replyInput);
         }
         function removeReplyInput(commentId) {
-            $("#ReplyInputDiv" + commentId).empty();
+            $("#postReply" + commentId).replaceWith(`<div id="ReplyInputDiv${commentId}"></div>`);
         }
 
         // 답글 ajax javascript
