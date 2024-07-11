@@ -384,6 +384,18 @@
                     })
             }
         })
+
+        //modal 창 show event 리스너
+        $(document).on('show.bs.modal','#modifyModal',function (event){
+            const target = event.relatedTarget
+            const commentId = target.getAttribute('data-bs-whatever')
+            const writer = $("#commentWriter" + commentId).text() // 수정할 작성자 이름 불러오기
+            const contents = $("#commentContents" + commentId).text() /// 수정할 댓글 내용 불러오기
+            $("#modifyCommentId").val(commentId)
+            $("#modify-writer").val(writer) // 수정할 작성자 이름을 작성자 수정 칸에 넣기
+            $("#modify-contents").val(contents)// 수정할 댓글 내용을 댓글 내용 수정 칸에 넣기
+        })
+
     </script>
 </div>
 </body>
