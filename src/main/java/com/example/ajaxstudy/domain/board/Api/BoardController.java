@@ -3,7 +3,6 @@ package com.example.ajaxstudy.domain.board.Api;
 import com.example.ajaxstudy.domain.board.BoardService;
 import com.example.ajaxstudy.domain.board.response.BoardDetailResponse;
 import com.example.ajaxstudy.domain.board.response.BoardListResponse;
-import com.example.ajaxstudy.domain.comment.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,7 +16,6 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
-    private final CommentService commentService;
 
     @GetMapping("/boards")
     public String boards(Model model){
