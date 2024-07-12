@@ -59,7 +59,8 @@ public class CommentService {
 
     @Transactional
     public void deleteByCommentId(Long commentId){
-        commentRepository.deleteById(commentId);
+        commentRepository.deleteChildAllByCommentId(commentId); // 자식 댓글들을 먼저 지우고
+        commentRepository.deleteById(commentId);// 부모 댓글을 지운다.
     }
 
     @Transactional
