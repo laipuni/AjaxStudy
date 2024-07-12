@@ -4,7 +4,6 @@ import com.example.ajaxstudy.domain.comment.Comment;
 import com.example.ajaxstudy.domain.heart.Heart;
 import jakarta.persistence.*;
 import lombok.Builder;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 
